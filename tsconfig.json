@@ -5,7 +5,6 @@
 		// vs. the extended @kitschpatrol/typescript-config
 		"target": "ESNext",
 		"jsx": "preserve",
-		"types": ["@kitschpatrol/unplugin-tldraw/client", "@kitschpatrol/unplugin-aphex/client"],
 		"allowUnusedLabels": false,
 		"exactOptionalPropertyTypes": true,
 		"noImplicitOverride": true,
@@ -23,7 +22,7 @@
 		"./playground-starlight/.astro/types.d.ts",
 		"./playground/.astro/types.d.ts"
 	],
-	"exclude": ["**/dist/", "**/bin/", "**/node_modules/", "references/**"],
+	"exclude": ["**/dist/", "**/bin/", "**/node_modules/"],
 	"mdx": {
 		"plugins": ["remark-directive", "remark-attribute-list"]
 	}

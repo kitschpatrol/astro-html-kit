@@ -8,25 +8,3 @@ export function stripTrailingSlash(string: string): string {
 
 	return string
 }
-
-/**
- * Helper to... linkify words ONLY works if the entire child of the element is
- * the word document is mutated
- */
-export function linkifyTerms(node: Node, termDictionary: Record<string, string>, base = '') {
-	if (node.nodeType === node.ELEMENT_NODE && node.parentNode && node.ownerDocument) {
-		// eslint-disable-next-line ts/no-unnecessary-condition, ts/no-unsafe-type-assertion
-		const text = (node as HTMLElement).textContent ?? ''
-
-		if (Object.keys(termDictionary).includes(text)) {
-			const link = node.ownerDocument.createElement('a')
-			// TODO use Astro path functions...
-
-			link.href = `${base.length > 0 ? base + '/' : ''}${termDictionary[text]}`
-
-			// Wrap the node in the link
-			node.parentNode.insertBefore(link, node)
-			link.append(node)
-		}
-	}
-}

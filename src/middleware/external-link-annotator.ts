@@ -4,13 +4,12 @@ export const externalLinkAnnotator = defineDomMiddleware((context, document) => 
 	const localHostname = 'localhost'
 	const { hostname: ourHostname } = context.site ?? { hostname: '' }
 	// Not on hero pages
-	for (const element of document.querySelectorAll<HTMLAnchorElement>(
-		'html:not([data-has-hero]) div.sl-markdown-content a',
-	)) {
+	for (const element of document.querySelectorAll<HTMLAnchorElement>('a')) {
 		try {
 			const { hostname } = new URL(element.href)
+			console.log(hostname)
 			if (hostname !== ourHostname && hostname !== localHostname && hostname !== '') {
-				element.classList.add('external-link')
+				element.dataset.externalLink = ''
 				element.setAttribute('rel', 'noopener noreferrer')
 			}
 		} catch {

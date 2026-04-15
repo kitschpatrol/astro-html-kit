@@ -5,5 +5,9 @@ import { defineConfig } from 'astro/config'
 process.env.BROWSER = 'chromium'
 
 export default defineConfig({
-	integrations: [htmlKit(), mdx()],
+	integrations: [
+		htmlKit({ addLinkPrefix: true, annotateExternalLinks: true, stripLinkSuffix: true }),
+		mdx(),
+	],
+	site: 'http://localhost:4321',
 })

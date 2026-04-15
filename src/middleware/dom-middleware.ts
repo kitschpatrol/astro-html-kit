@@ -1,5 +1,4 @@
 import type { APIContext, MiddlewareHandler } from 'astro'
-import { defineMiddleware } from 'astro:middleware'
 import { parseHTML } from 'linkedom'
 
 export type DomMiddlewareHandler = (
@@ -32,7 +31,7 @@ export function defineDomMiddlewareAsMiddleware(fn: DomMiddlewareHandler): Middl
  * parse and render of the DOM.
  */
 export function domSequence(...domHandlers: DomMiddlewareHandler[]): MiddlewareHandler {
-	return defineMiddleware(async (context, next) => {
+	return async (context, next) => {
 		const response = await next()
 		// Only operate on HTML responses
 		if (response.headers.get('content-type') !== 'text/html') {
@@ -55,5 +54,5 @@ export function domSequence(...domHandlers: DomMiddlewareHandler[]): MiddlewareH
 			status: response.status,
 			statusText: response.statusText,
 		})
-	})
+	}
 }

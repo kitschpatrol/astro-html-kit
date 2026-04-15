@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@astrojs/compiler':
-        specifier: 3.0.1
-        version: 3.0.1
       linkedom:
         specifier: ^0.18.12
         version: 0.18.12

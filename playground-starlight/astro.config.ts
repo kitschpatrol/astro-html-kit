@@ -1,12 +1,14 @@
 import starlight from '@astrojs/starlight'
-import htmlKit from 'astro-html-kit'
 import { defineConfig } from 'astro/config'
 
 export default defineConfig({
 	integrations: [
-		htmlKit(),
 		starlight({
 			sidebar: [
+				{
+					items: [{ label: 'Middleware', slug: 'middleware' }],
+					label: 'Tests',
+				},
 				{
 					items: [
 						{ label: 'Picture', slug: 'components/picture' },
@@ -25,4 +27,5 @@ export default defineConfig({
 			title: 'astro-html-kit',
 		}),
 	],
+	site: 'http://localhost:4321',
 })

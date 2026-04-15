@@ -1,11 +1,11 @@
 ---
 layout: ../layouts/Layout.astro
-title: MDX
+title: Markdown
 ---
 
-# MDX page
+# Markdown page
 
-Middleware transforms apply to MDX-generated HTML too.
+Middleware transforms apply to plain Markdown-generated HTML too.
 
 ## Strip Link Suffix
 
@@ -17,7 +17,7 @@ Middleware transforms apply to MDX-generated HTML too.
 
 - [Example.com](https://www.example.com) — should get data annotation
 - [GitHub](https://github.com) — should get data annotation
-- [Internal link](/mdx) — should be unchanged
+- [Internal link](/markdown) — should be unchanged
 
 ## Void element handling
 
