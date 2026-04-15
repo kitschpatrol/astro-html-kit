@@ -17,6 +17,7 @@ export type HtmlKitMiddlewareConfig = {
 	deduplicateIds?: boolean
 	fixNumericIds?: boolean | string
 	stripLinkSuffix?: boolean
+	trimTrailingWhitespace?: boolean
 }
 
 /**
@@ -66,7 +67,9 @@ export function htmlKit(config?: HtmlKitMiddlewareConfig): MiddlewareHandler {
 		}
 	}
 
-	return domSequence(...handlers)
+	return domSequence(handlers, {
+		trimTrailingWhitespace: config?.trimTrailingWhitespace,
+	})
 }
 
 export {
@@ -74,4 +77,4 @@ export {
 	defineDomMiddlewareAsMiddleware,
 	domSequence,
 } from './middleware/dom-middleware'
-export type { DomMiddlewareHandler } from './middleware/dom-middleware'
+export type { DomMiddlewareHandler, DomSequenceOptions } from './middleware/dom-middleware'

@@ -6,6 +6,10 @@ export type DomMiddlewareHandler = (
 	document: Document,
 ) => Document | Promise<Document>
 
+export type DomSequenceOptions = {
+	trimTrailingWhitespace?: boolean | undefined
+}
+
 /**
  * Define a DOM middleware handler that can be used in `domSequence()`.
  *
@@ -20,7 +24,7 @@ export function defineDomMiddleware(fn: DomMiddlewareHandler): DomMiddlewareHand
  * Define a DOM middleware handler in the form of Astro's MiddlewareHandler.
  */
 export function defineDomMiddlewareAsMiddleware(fn: DomMiddlewareHandler): MiddlewareHandler {
-	return domSequence(fn)
+	return domSequence([fn])
 }
 
 /**
@@ -30,7 +34,10 @@ export function defineDomMiddlewareAsMiddleware(fn: DomMiddlewareHandler): Middl
  * Running as a sequence allows you to run multiple DOM transforms via a single
  * parse and render of the DOM.
  */
-export function domSequence(...domHandlers: DomMiddlewareHandler[]): MiddlewareHandler {
+export function domSequence(
+	handlers: DomMiddlewareHandler[],
+	options?: DomSequenceOptions,
+): MiddlewareHandler {
 	return async (context, next) => {
 		const response = await next()
 		// Only operate on HTML responses
@@ -43,13 +50,22 @@ export function domSequence(...domHandlers: DomMiddlewareHandler[]): MiddlewareH
 
 		// Not actually copying the document, leaving that to the handlers,
 		//  so mutation is possible... gross but hypothetically for efficiency...
-		for (const domHandler of domHandlers) {
+		for (const domHandler of handlers) {
 			document = await domHandler(context, document)
 		}
 
 		// Linkedom implements a `toString()` that serializes the document back to HTML
 		// eslint-disable-next-line ts/no-base-to-string
-		return new Response(document.toString(), {
+		let output = document.toString() as string
+
+		if (options?.trimTrailingWhitespace) {
+			output = output
+				.split('\n')
+				.map((line) => line.trimEnd())
+				.join('\n')
+		}
+
+		return new Response(output, {
 			headers: response.headers,
 			status: response.status,
 			statusText: response.statusText,
