@@ -6,9 +6,10 @@ export type DomMiddlewareHandler = (
 	document: Document,
 ) => Document | Promise<Document>
 
-export type DomSequenceOptions = {
-	trimTrailingWhitespace?: boolean | undefined
-}
+export type StringMiddlewareHandler = (
+	context: APIContext,
+	html: string,
+) => string | Promise<string>
 
 /**
  * Define a DOM middleware handler that can be used in `domSequence()`.
@@ -21,23 +22,38 @@ export function defineDomMiddleware(fn: DomMiddlewareHandler): DomMiddlewareHand
 }
 
 /**
+ * Define a string middleware handler that can be used in `domSequence()`.
+ *
+ * String handlers run after DOM serialization, operating on the raw HTML
+ * string.
+ */
+export function defineStringMiddleware(fn: StringMiddlewareHandler): StringMiddlewareHandler {
+	return fn
+}
+
+/**
  * Define a DOM middleware handler in the form of Astro's MiddlewareHandler.
  */
 export function defineDomMiddlewareAsMiddleware(fn: DomMiddlewareHandler): MiddlewareHandler {
-	return domSequence([fn])
+	return domSequence({ domHandlers: [fn] })
+}
+
+export type DomSequenceOptions = {
+	domHandlers?: DomMiddlewareHandler[] | undefined
+	stringHandlers?: StringMiddlewareHandler[] | undefined
 }
 
 /**
  * Like Astro's `sequence()` middleware, but passes DOM objects through instead
- * of Response objects.
+ * of Response objects, followed by string-level transforms on the serialized
+ * HTML.
  *
  * Running as a sequence allows you to run multiple DOM transforms via a single
  * parse and render of the DOM.
  */
-export function domSequence(
-	handlers: DomMiddlewareHandler[],
-	options?: DomSequenceOptions,
-): MiddlewareHandler {
+export function domSequence(options: DomSequenceOptions): MiddlewareHandler {
+	const { domHandlers = [], stringHandlers = [] } = options
+
 	return async (context, next) => {
 		const response = await next()
 		// Only operate on HTML responses
@@ -50,7 +66,7 @@ export function domSequence(
 
 		// Not actually copying the document, leaving that to the handlers,
 		//  so mutation is possible... gross but hypothetically for efficiency...
-		for (const domHandler of handlers) {
+		for (const domHandler of domHandlers) {
 			document = await domHandler(context, document)
 		}
 
@@ -58,11 +74,8 @@ export function domSequence(
 		// eslint-disable-next-line ts/no-base-to-string
 		let output = document.toString() as string
 
-		if (options?.trimTrailingWhitespace) {
-			output = output
-				.split('\n')
-				.map((line) => line.trimEnd())
-				.join('\n')
+		for (const stringHandler of stringHandlers) {
+			output = await stringHandler(context, output)
 		}
 
 		return new Response(output, {

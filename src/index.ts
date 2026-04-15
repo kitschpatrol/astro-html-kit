@@ -9,12 +9,12 @@ const resolvedVirtualModuleId = `\0${virtualModuleId}`
 /**
  * Integration configuration for astro-html-kit.
  *
- * Same as `HtmlKitMiddlewareConfig` but without `custom`, since function
- * handlers can't be serialized through the integration's virtual module. Use
- * the middleware export directly (`astro-html-kit/middleware`) if you need
- * custom handlers.
+ * Same as `HtmlKitMiddlewareConfig` but without `customDomHandler` and
+ * `customStringHandler`, since function handlers can't be serialized through
+ * the integration's virtual module. Use the middleware export directly
+ * (`astro-html-kit/middleware`) if you need custom handlers.
  */
-export type HtmlKitConfig = Omit<HtmlKitMiddlewareConfig, 'custom'>
+export type HtmlKitConfig = Omit<HtmlKitMiddlewareConfig, 'customDomHandler' | 'customStringHandler'>
 
 /**
  * Astro integration for astro-html-kit.

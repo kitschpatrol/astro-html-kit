@@ -8,6 +8,6 @@ const addProcessedAttribute = defineDomMiddleware((_context, document) => {
 export const onRequest = htmlKit({
 	addLinkPrefix: true,
 	annotateExternalLinks: true,
-	custom: addProcessedAttribute,
+	customDomHandler: addProcessedAttribute,
 	stripLinkSuffix: true,
 })

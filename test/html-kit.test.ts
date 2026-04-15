@@ -82,14 +82,14 @@ describe('htmlKit', () => {
 	})
 
 	it('runs a single custom handler', async () => {
-		const middleware = htmlKit({ custom: addCustomAttribute })
+		const middleware = htmlKit({ customDomHandler: addCustomAttribute })
 		const response = await callMiddleware(middleware, '<html><body><p>Test</p></body></html>')
 		const result = await response.text()
 		expect(result).toContain('data-custom="true"')
 	})
 
 	it('runs multiple custom handlers in order', async () => {
-		const middleware = htmlKit({ custom: [addFirstAttribute, addSecondAttribute] })
+		const middleware = htmlKit({ customDomHandler: [addFirstAttribute, addSecondAttribute] })
 		const response = await callMiddleware(middleware, '<html><body><p>Test</p></body></html>')
 		const result = await response.text()
 		expect(result).toContain('data-first="true"')
