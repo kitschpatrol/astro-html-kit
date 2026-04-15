@@ -1,0 +1,73 @@
+---
+layout: ../layouts/Layout.astro
+title: MDX
+---
+
+# MDX Tests
+
+## Image markdown to auto-imported Picture
+
+### Regular image with caption
+
+![Alt](../assets/test.jpeg)
+caption **text**!
+
+### Regular image without caption
+
+![Alt](../assets/test.jpeg)
+
+### tldr image with caption, auto src dark
+
+![Alt](../assets/test-sketch.tldr)
+caption **text**!
+
+### tldr image without caption, auto src dark
+
+![Alt](../assets/test-sketch.tldr)
+
+### svg with caption
+
+![Alt](../assets/tiger.svg)
+caption **text**!
+
+### svg without caption
+
+![Alt](../assets/tiger.svg)
+
+### aphex with caption
+
+![Alt](~aphex/Tiny/tiny)
+caption **text**!
+
+### aphex without caption
+
+![Alt](~aphex/Tiny/tiny)
+
+## Image with attributes
+
+### Zoom
+
+![Alt](~aphex/Tiny/tiny){:zoom="true"}
+
+![Alt](~aphex/Tiny/tiny){:zoom="true"}
+caption **text**!
+
+### Layout constrained
+
+![Alt](../assets/test.jpeg){:layout="constrained"}
+
+### Background
+
+![Alt](../assets/tiger.svg){:background="#e8e4d0" backgroundDark="#2a2520"}
+
+## Video directive
+
+:::Video{src="f24d7806-2cf5-4df9-a340-840d68eef8c9" zoom=true}
+Video **caption** goes here
+:::
+
+## Audio directive
+
+:::Audio{src="/test.mp3"}
+Audio **caption** goes here
+:::

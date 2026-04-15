@@ -1,0 +1,17 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { pages } from '../pages'
+---
+
+<Layout title="astro-html-kit playground">
+	<h1>astro-html-kit playground</h1>
+	<ul>
+		{
+			pages.map((page) => (
+				<li>
+					<a href={page.href}>{page.title}</a>
+				</li>
+			))
+		}
+	</ul>
+</Layout>

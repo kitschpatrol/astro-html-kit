@@ -1,0 +1,72 @@
+{
+	"name": "astro-html-kit",
+	"version": "0.0.0",
+	"description": "Astro integration for common DOM transforms and clean HTML.",
+	"keywords": [
+		"astro",
+		"astro-integration",
+		"astro-component",
+		"html",
+		"dom"
+	],
+	"homepage": "https://github.com/kitschpatrol/astro-html-kit",
+	"bugs": "https://github.com/kitschpatrol/astro-html-kit/issues",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/kitschpatrol/astro-html-kit.git"
+	},
+	"license": "MIT",
+	"author": {
+		"name": "Eric Mika",
+		"email": "eric@ericmika.com",
+		"url": "https://ericmika.com"
+	},
+	"sideEffects": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"files": [
+		"src"
+	],
+	"scripts": {
+		"build": "pnpm astro sync && pnpm run -r astro sync",
+		"clean": "shx rm -f pnpm-lock.yaml && git clean -fdX -e !.claude/",
+		"dev": "pnpm run play",
+		"fix": "ksc fix",
+		"lint": "ksc lint && pnpm run -r --include-workspace-root astro check",
+		"play": "pnpm -C playground run dev",
+		"play-starlight": "pnpm -C playground-starlight run dev",
+		"release": "bumpp --commit 'Release: %s' && pnpm build && NPM_AUTH_TOKEN=$(op read 'op://Personal/npm/token') && pnpm publish",
+		"test": "vitest run"
+	},
+	"dependencies": {
+		"@astrojs/compiler": "3.0.1",
+		"linkedom": "^0.18.12"
+	},
+	"devDependencies": {
+		"@astrojs/check": "^0.9.8",
+		"@kitschpatrol/shared-config": "^7.4.1",
+		"@types/node": "~24.12.2",
+		"astro": "^6.1.6",
+		"bumpp": "^11.0.1",
+		"node-addon-api": "^8.7.0",
+		"node-gyp": "^12.2.0",
+		"shx": "^0.4.0",
+		"typescript": "~6.0.2",
+		"vitest": "^4.1.4"
+	},
+	"peerDependencies": {
+		"astro": "^6.0.0"
+	},
+	"packageManager": "pnpm@10.33.0",
+	"engines": {
+		"node": ">=22.12.0"
+	},
+	"devEngines": {
+		"runtime": {
+			"name": "node",
+			"version": ">=24.12.0"
+		}
+	}
+}
