@@ -26,7 +26,7 @@ async function callMiddleware(
 	middleware: ReturnType<typeof htmlKit>,
 	html: string,
 ): Promise<Response> {
-	// eslint-disable-next-line ts/no-unsafe-type-assertion
+	// eslint-disable-next-line ts/no-unsafe-type-assertion, ts/promise-function-async
 	return (await middleware(context, () => Promise.resolve(htmlResponse(html)))) as Response
 }
 
@@ -56,10 +56,8 @@ describe('htmlKit', () => {
 	it('skips non-HTML responses', async () => {
 		const middleware = htmlKit()
 		const jsonBody = '{"key": "value"}'
-		// eslint-disable-next-line ts/no-unsafe-type-assertion
-		const response = (await middleware(context, () =>
-			Promise.resolve(jsonResponse(jsonBody)),
-		)) as Response
+		// eslint-disable-next-line ts/no-unsafe-type-assertion, ts/require-await
+		const response = (await middleware(context, async () => jsonResponse(jsonBody))) as Response
 		expect(await response.text()).toBe(jsonBody)
 	})
 

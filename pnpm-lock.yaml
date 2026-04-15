@@ -22,7 +22,7 @@ importers:
         specifier: ~24.12.2
         version: 24.12.2
       astro:
-        specifier: ^6.1.6
+        specifier: ^6.1.7
         version: 6.1.7(@types/node@24.12.2)(jiti@2.6.1)(rollup@4.60.1)(typescript@6.0.2)(yaml@2.8.3)
       bumpp:
         specifier: ^11.0.1
@@ -55,7 +55,7 @@ importers:
         specifier: ~25.5.2
         version: 25.5.2
       astro:
-        specifier: ^6.1.6
+        specifier: ^6.1.7
         version: 6.1.7(@types/node@25.5.2)(jiti@2.6.1)(rollup@4.60.1)(typescript@6.0.2)(yaml@2.8.3)
       astro-html-kit:
         specifier: link:..
@@ -85,7 +85,7 @@ importers:
         specifier: ~25.5.2
         version: 25.5.2
       astro:
-        specifier: ^6.1.6
+        specifier: ^6.1.7
         version: 6.1.7(@types/node@25.5.2)(jiti@2.6.1)(rollup@4.60.1)(typescript@6.0.2)(yaml@2.8.3)
       astro-html-kit:
         specifier: link:..

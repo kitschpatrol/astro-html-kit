@@ -1,8 +1,10 @@
 import type { MiddlewareHandler } from 'astro'
 import type { DomMiddlewareHandler } from './middleware/dom-middleware'
 import { addLinkPrefix } from './middleware/add-link-prefix'
+import { deduplicateIds } from './middleware/deduplicate-ids'
 import { domSequence } from './middleware/dom-middleware'
 import { externalLinkAnnotator } from './middleware/external-link-annotator'
+import { createFixNumericIds } from './middleware/fix-numeric-ids'
 import { stripLinkSuffix } from './middleware/strip-link-suffix'
 
 /**
@@ -12,6 +14,8 @@ export type HtmlKitMiddlewareConfig = {
 	addLinkPrefix?: boolean
 	annotateExternalLinks?: boolean
 	custom?: DomMiddlewareHandler | DomMiddlewareHandler[]
+	deduplicateIds?: boolean
+	fixNumericIds?: boolean | string
 	stripLinkSuffix?: boolean
 }
 
@@ -47,6 +51,12 @@ export function htmlKit(config?: HtmlKitMiddlewareConfig): MiddlewareHandler {
 	if (config?.annotateExternalLinks) handlers.push(externalLinkAnnotator)
 	if (config?.addLinkPrefix) handlers.push(addLinkPrefix)
 	if (config?.stripLinkSuffix) handlers.push(stripLinkSuffix)
+	if (config?.fixNumericIds) {
+		const prefix = typeof config.fixNumericIds === 'string' ? config.fixNumericIds : 'id'
+		handlers.push(createFixNumericIds(prefix))
+	}
+
+	if (config?.deduplicateIds) handlers.push(deduplicateIds)
 
 	if (config?.custom) {
 		if (Array.isArray(config.custom)) {
