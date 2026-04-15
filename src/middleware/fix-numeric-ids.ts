@@ -1,6 +1,7 @@
 import { defineDomMiddleware } from './dom-middleware'
 
 const NUMERIC_ID_REGEX = /^\d/
+const NUMERIC_HREF_REGEX = /^#\d/
 
 /**
  * Creates a DOM middleware handler that prefixes numeric IDs to ensure valid
@@ -25,7 +26,7 @@ export function createFixNumericIds(prefix: string) {
 
 		for (const anchor of document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')) {
 			const href = anchor.getAttribute('href')
-			if (href && /^#\d/.test(href)) {
+			if (href && NUMERIC_HREF_REGEX.test(href)) {
 				anchor.setAttribute('href', `#${fullPrefix}${href.slice(1)}`)
 			}
 		}

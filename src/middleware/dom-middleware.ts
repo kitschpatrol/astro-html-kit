@@ -9,7 +9,7 @@ export type DomMiddlewareHandler = (
 export type StringMiddlewareHandler = (
 	context: APIContext,
 	html: string,
-) => string | Promise<string>
+) => Promise<string> | string
 
 /**
  * Define a DOM middleware handler that can be used in `domSequence()`.
@@ -72,7 +72,7 @@ export function domSequence(options: DomSequenceOptions): MiddlewareHandler {
 
 		// Linkedom implements a `toString()` that serializes the document back to HTML
 		// eslint-disable-next-line ts/no-base-to-string
-		let output = document.toString() as string
+		let output = document.toString()
 
 		for (const stringHandler of stringHandlers) {
 			output = await stringHandler(context, output)

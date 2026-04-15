@@ -1,12 +1,13 @@
 {
 	"name": "astro-html-kit",
 	"version": "0.0.0",
-	"description": "Astro integration for common DOM transforms and clean HTML.",
+	"description": "Astro integration and middleware to clean up your HTML.",
 	"keywords": [
 		"astro",
 		"astro-integration",
 		"astro-component",
 		"html",
+		"middleware",
 		"dom"
 	],
 	"homepage": "https://github.com/kitschpatrol/astro-html-kit",
