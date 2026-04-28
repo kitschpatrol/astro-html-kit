@@ -18,6 +18,10 @@
 
 <!-- /short-description -->
 
+> [!WARNING]
+>
+> **This project is under development. It should not be considered suitable for general use until a 1.0 release.**
+
 ## Overview
 
 Astro renders clean HTML, but the final output often needs small fixes that are tedious to handle per-page: stripping `.html` suffixes from links, annotating external URLs, deduplicating IDs across repeated content, or trimming trailing whitespace.
