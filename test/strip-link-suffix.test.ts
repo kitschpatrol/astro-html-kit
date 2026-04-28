@@ -43,6 +43,30 @@ describe('stripLinkSuffix', () => {
 		expect(link.getAttribute('href')).toBe('/about.html')
 	})
 
+	it('strips .html before a query string', async () => {
+		const document = parseDocument(
+			'<html><body><a href="/about.html?x=1">About</a></body></html>',
+		)
+		const result = await stripLinkSuffix(context, document)
+		expect(result.querySelector('a')!.getAttribute('href')).toBe('/about?x=1')
+	})
+
+	it('strips .html before a hash fragment', async () => {
+		const document = parseDocument(
+			'<html><body><a href="/about.html#section">About</a></body></html>',
+		)
+		const result = await stripLinkSuffix(context, document)
+		expect(result.querySelector('a')!.getAttribute('href')).toBe('/about#section')
+	})
+
+	it('strips .html before a query and hash combined', async () => {
+		const document = parseDocument(
+			'<html><body><a href="/about.html?x=1#section">About</a></body></html>',
+		)
+		const result = await stripLinkSuffix(context, document)
+		expect(result.querySelector('a')!.getAttribute('href')).toBe('/about?x=1#section')
+	})
+
 	it('handles multiple links', async () => {
 		const document = parseDocument(`<html><body>
 			<a href="/one.html">One</a>
