@@ -1,6 +1,11 @@
 import type { APIContext, MiddlewareHandler } from 'astro'
 import { parseHTML } from 'linkedom'
 
+/**
+ * Handler that runs against the parsed DOM. Handlers may mutate the input
+ * `document` directly and return it — the document is shared across the whole
+ * sequence so that no extra parse/serialize round-trip is needed per handler.
+ */
 export type DomMiddlewareHandler = (
 	context: APIContext,
 	document: Document,
@@ -71,7 +76,7 @@ export function domSequence(options: DomSequenceOptions): MiddlewareHandler {
 			document = await domHandler(context, document)
 		}
 
-		// Linkedom implements a `toString()` that serializes the document back to HTML
+		// linkedom's Document overrides toString() to serialize back to HTML.
 		// eslint-disable-next-line ts/no-base-to-string
 		let output = document.toString()
 
