@@ -7,11 +7,13 @@ const ASTRO_PATH_PREFIX = '/_astro/'
 
 const URL_ATTRIBUTES = ['href', 'src'] as const
 
+const LEADING_WHITESPACE_REGEX = /^\s*/
+
 function rewriteSrcset(value: string, prefix: string): string {
 	return value
 		.split(',')
 		.map((candidate) => {
-			const leading = /^\s*/.exec(candidate)?.[0] ?? ''
+			const leading = LEADING_WHITESPACE_REGEX.exec(candidate)?.[0] ?? ''
 			const rest = candidate.slice(leading.length)
 			if (rest.startsWith(ASTRO_PATH_PREFIX)) {
 				return `${leading}${prefix}${rest}`

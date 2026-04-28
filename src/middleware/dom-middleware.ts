@@ -76,7 +76,7 @@ export function domSequence(options: DomSequenceOptions): MiddlewareHandler {
 			document = await domHandler(context, document)
 		}
 
-		// linkedom's Document overrides toString() to serialize back to HTML.
+		// Linkedom's Document overrides toString() to serialize back to HTML.
 		// eslint-disable-next-line ts/no-base-to-string
 		let output = document.toString()
 

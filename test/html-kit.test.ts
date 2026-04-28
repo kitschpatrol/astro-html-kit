@@ -25,9 +25,12 @@ const context = mockContext as unknown as Parameters<ReturnType<typeof htmlKit>>
 async function callMiddleware(
 	middleware: ReturnType<typeof htmlKit>,
 	html: string,
+	contentType = 'text/html',
 ): Promise<Response> {
 	// eslint-disable-next-line ts/no-unsafe-type-assertion, ts/promise-function-async
-	return (await middleware(context, () => Promise.resolve(htmlResponse(html)))) as Response
+	return (await middleware(context, () =>
+		Promise.resolve(htmlResponse(html, contentType)),
+	)) as Response
 }
 
 const addCustomAttribute: DomMiddlewareHandler = (_context, document) => {
@@ -55,15 +58,11 @@ describe('htmlKit', () => {
 
 	it('processes HTML responses with a charset parameter', async () => {
 		const middleware = htmlKit({ annotateExternalLinks: true })
-		const response = (await middleware(context, () =>
-			Promise.resolve(
-				htmlResponse(
-					'<html><body><a href="https://example.com">Ext</a></body></html>',
-					'text/html; charset=utf-8',
-				),
-			),
-			// eslint-disable-next-line ts/no-unsafe-type-assertion
-		)) as Response
+		const response = await callMiddleware(
+			middleware,
+			'<html><body><a href="https://example.com">Ext</a></body></html>',
+			'text/html; charset=utf-8',
+		)
 		const result = await response.text()
 		expect(result).toContain('data-external-link')
 	})

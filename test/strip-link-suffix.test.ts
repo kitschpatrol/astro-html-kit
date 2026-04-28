@@ -44,9 +44,7 @@ describe('stripLinkSuffix', () => {
 	})
 
 	it('strips .html before a query string', async () => {
-		const document = parseDocument(
-			'<html><body><a href="/about.html?x=1">About</a></body></html>',
-		)
+		const document = parseDocument('<html><body><a href="/about.html?x=1">About</a></body></html>')
 		const result = await stripLinkSuffix(context, document)
 		expect(result.querySelector('a')!.getAttribute('href')).toBe('/about?x=1')
 	})

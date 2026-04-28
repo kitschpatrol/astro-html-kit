@@ -19,6 +19,8 @@ const ID_REFERENCE_ATTRIBUTES = [
 	'headers',
 ] as const
 
+const WHITESPACE_SPLIT_REGEX = /\s+/
+
 /**
  * Creates a DOM middleware handler that prefixes numeric IDs to ensure valid
  * HTML identifiers. Also updates anchor `<a href="#…">` links, `<label for>`,
@@ -57,7 +59,10 @@ export function createFixNumericIds(prefix: string) {
 					continue
 				}
 
-				const updated = value.split(/\s+/).map(prefixIfNumeric).join(' ')
+				const updated = value
+					.split(WHITESPACE_SPLIT_REGEX)
+					.map((id) => prefixIfNumeric(id))
+					.join(' ')
 				if (updated !== value) {
 					element.setAttribute(attribute, updated)
 				}
