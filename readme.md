@@ -29,9 +29,9 @@ Some of these transforms (like fixing numeric IDs or deduplicating headings) cou
 Built-in transforms:
 
 - **`annotateExternalLinks`** — Add `data-external-link` and `rel="noopener noreferrer"` to links pointing outside your site.
-- **`addLinkPrefix`** — Prefix `/_astro/` asset paths with `BASE_URL`.
-- **`stripLinkSuffix`** — Remove `.html` from internal link hrefs.
-- **`fixNumericIds`** — Prefix IDs that start with a digit (e.g. `id="2024-updates"` becomes `id="id-2024-updates"`) to avoid issues with CSS selectors and JavaScript APIs.
+- **`addLinkPrefix`** — Prefix `/_astro/` asset paths in `href`, `src`, and `srcset` attributes with `BASE_URL`.
+- **`stripLinkSuffix`** — Remove `.html` from internal link hrefs (including before `?query` and `#hash`).
+- **`fixNumericIds`** — Prefix IDs that start with a digit (e.g. `id="2024-updates"` becomes `id="id-2024-updates"`) to avoid issues with CSS selectors and JavaScript APIs. Also rewrites `<a href="#…">` fragments along with `for`, `headers`, and the aria-\* attributes that reference IDs.
 - **`deduplicateIds`** — Append `-2`, `-3`, etc. to duplicate IDs on the page, matching `github-slugger` behavior but page-wide.
 - **`trimTrailingWhitespace`** — Trim trailing whitespace from each line of the HTML output.
 
@@ -105,25 +105,25 @@ export const onRequest = sequence(htmlKit({ annotateExternalLinks: true }), myOt
 
 All options apply to both the integration and middleware configs, except `customDomHandler` and `customStringHandler` which are middleware-only (functions can't be serialized through the integration's virtual module).
 
-| Option                   | Type                                                   | Default | Description                                                           |
-| ------------------------ | ------------------------------------------------------ | ------- | --------------------------------------------------------------------- |
-| `addLinkPrefix`          | `boolean`                                              | `false` | Prefix `/_astro/` asset paths with `BASE_URL`.                        |
-| `annotateExternalLinks`  | `boolean`                                              | `false` | Add `data-external-link` and `rel` to external links.                 |
-| `deduplicateIds`         | `boolean`                                              | `false` | Append `-2`, `-3`, etc. to duplicate IDs.                             |
-| `fixNumericIds`          | `boolean \| string`                                    | `false` | Prefix numeric IDs. `true` uses `id-`, a string sets a custom prefix. |
-| `stripLinkSuffix`        | `boolean`                                              | `false` | Remove `.html` from internal link hrefs. Requires `site` in config.   |
-| `trimTrailingWhitespace` | `boolean`                                              | `false` | Trim trailing whitespace from each line of the HTML output.           |
-| `customDomHandler`       | `DomMiddlewareHandler \| DomMiddlewareHandler[]`       | —       | Custom DOM transform(s). Middleware only.                             |
-| `customStringHandler`    | `StringMiddlewareHandler \| StringMiddlewareHandler[]` | —       | Custom string transform(s). Middleware only.                          |
+| Option                   | Type                                                   | Default | Description                                                                                                     |
+| ------------------------ | ------------------------------------------------------ | ------- | --------------------------------------------------------------------------------------------------------------- |
+| `addLinkPrefix`          | `boolean`                                              | `false` | Prefix `/_astro/` asset paths in `href`, `src`, and `srcset` with `BASE_URL` (read from `import.meta.env`).     |
+| `annotateExternalLinks`  | `boolean`                                              | `false` | Add `data-external-link` and `rel` to external links.                                                           |
+| `deduplicateIds`         | `boolean`                                              | `false` | Append `-2`, `-3`, etc. to duplicate IDs.                                                                       |
+| `fixNumericIds`          | `boolean \| string`                                    | `false` | Prefix numeric IDs. `true` uses `id-`, a string sets a custom prefix (the trailing `-` is added automatically). |
+| `stripLinkSuffix`        | `boolean`                                              | `false` | Remove `.html` from internal link hrefs. Requires `site` in config.                                             |
+| `trimTrailingWhitespace` | `boolean`                                              | `false` | Trim trailing whitespace from each line of the HTML output.                                                     |
+| `customDomHandler`       | `DomMiddlewareHandler \| DomMiddlewareHandler[]`       | none    | Custom DOM transform(s). Middleware only — function handlers can't be serialized through the integration.       |
+| `customStringHandler`    | `StringMiddlewareHandler \| StringMiddlewareHandler[]` | none    | Custom string transform(s). Middleware only — function handlers can't be serialized through the integration.    |
 
 ## Custom handlers
 
 ### DOM handlers
 
-DOM handlers receive an Astro `APIContext` and a linkedom `Document`, and return a (possibly mutated) `Document`. They run before serialization.
+DOM handlers receive an Astro `APIContext` and a linkedom `Document`, and return a `Document`. The document is shared across the whole sequence, so handlers may mutate the input directly and return it — no copy is made between handlers. They run before serialization.
 
 ```ts
-// Src/middleware.ts
+// In src/middleware.ts
 import { defineDomMiddleware, htmlKit } from 'astro-html-kit/middleware'
 
 const addTimestamp = defineDomMiddleware((_context, document) => {
@@ -141,7 +141,7 @@ export const onRequest = htmlKit({
 String handlers receive the serialized HTML string after all DOM handlers have run. They're useful for text-level transformations that don't need a DOM tree.
 
 ```ts
-// Src/middleware.ts
+// In src/middleware.ts
 import { defineStringMiddleware, htmlKit } from 'astro-html-kit/middleware'
 
 const addComment = defineStringMiddleware(
@@ -156,7 +156,7 @@ export const onRequest = htmlKit({
 
 ### Execution order
 
-1. Built-in DOM handlers (in config order: `annotateExternalLinks`, `addLinkPrefix`, `stripLinkSuffix`, `fixNumericIds`, `deduplicateIds`)
+1. Built-in DOM handlers, in this fixed order: `annotateExternalLinks`, `addLinkPrefix`, `stripLinkSuffix`, `fixNumericIds`, `deduplicateIds`
 2. Custom DOM handlers
 3. Serialization via linkedom `toString()`
 4. Built-in string handlers (`trimTrailingWhitespace`)
@@ -183,17 +183,17 @@ This architecture means transforms apply to all Astro-rendered HTML regardless o
 
 ### `astro-html-kit/middleware`
 
-| Export                            | Description                                                                  |
-| --------------------------------- | ---------------------------------------------------------------------------- |
-| `htmlKit`                         | Middleware factory. Returns an Astro `MiddlewareHandler`.                    |
-| `defineDomMiddleware`             | Identity function for typing DOM handlers.                                   |
-| `defineStringMiddleware`          | Identity function for typing string handlers.                                |
-| `defineDomMiddlewareAsMiddleware` | Wrap a single DOM handler as a standalone `MiddlewareHandler`.               |
-| `domSequence`                     | Lower-level API: compose DOM and string handlers into a `MiddlewareHandler`. |
-| `HtmlKitMiddlewareConfig` (type)  | Middleware config type.                                                      |
-| `DomMiddlewareHandler` (type)     | `(context: APIContext, document: Document) => Document \| Promise<Document>` |
-| `StringMiddlewareHandler` (type)  | `(context: APIContext, html: string) => string \| Promise<string>`           |
-| `DomSequenceOptions` (type)       | Options for `domSequence`.                                                   |
+| Export                            | Description                                                                                                                                                                 |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `htmlKit`                         | Middleware factory. Returns an Astro `MiddlewareHandler`.                                                                                                                   |
+| `defineDomMiddleware`             | Identity function for typing DOM handlers.                                                                                                                                  |
+| `defineStringMiddleware`          | Identity function for typing string handlers.                                                                                                                               |
+| `defineDomMiddlewareAsMiddleware` | Wrap a single DOM handler as a standalone `MiddlewareHandler`. Useful when registering one transform via Astro's `sequence()` without invoking the full `htmlKit` pipeline. |
+| `domSequence`                     | Lower-level API: compose DOM and string handlers into a `MiddlewareHandler`.                                                                                                |
+| `HtmlKitMiddlewareConfig` (type)  | Middleware config type.                                                                                                                                                     |
+| `DomMiddlewareHandler` (type)     | `(context: APIContext, document: Document) => Document \| Promise<Document>`                                                                                                |
+| `StringMiddlewareHandler` (type)  | `(context: APIContext, html: string) => string \| Promise<string>`                                                                                                          |
+| `DomSequenceOptions` (type)       | Options for `domSequence`.                                                                                                                                                  |
 
 ## Maintainers
 
