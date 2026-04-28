@@ -37,6 +37,16 @@ describe('addLinkPrefix', () => {
 		expect(link.getAttribute('href')).toBe('https://example.com')
 	})
 
+	it('does not modify srcset without /_astro/ urls', async () => {
+		const document = parseDocument(
+			'<html><body><img srcset="https://example.com/foo.png 1x, https://example.com/bar.png 2x" /></body></html>',
+		)
+		const result = await addLinkPrefix(context, document)
+		expect(result.querySelector('img')!.getAttribute('srcset')).toBe(
+			'https://example.com/foo.png 1x, https://example.com/bar.png 2x',
+		)
+	})
+
 	it('handles elements without href or src', async () => {
 		const document = parseDocument('<html><body><div>No link</div></body></html>')
 		const result = await addLinkPrefix(context, document)
