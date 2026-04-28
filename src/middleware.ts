@@ -52,15 +52,26 @@ export function htmlKit(config?: HtmlKitMiddlewareConfig): MiddlewareHandler {
 	const domHandlers: DomMiddlewareHandler[] = []
 	const stringHandlers: StringMiddlewareHandler[] = []
 
-	if (config?.annotateExternalLinks) domHandlers.push(externalLinkAnnotator)
-	if (config?.addLinkPrefix) domHandlers.push(addLinkPrefix)
-	if (config?.stripLinkSuffix) domHandlers.push(stripLinkSuffix)
+	if (config?.annotateExternalLinks) {
+		domHandlers.push(externalLinkAnnotator)
+	}
+
+	if (config?.addLinkPrefix) {
+		domHandlers.push(addLinkPrefix)
+	}
+
+	if (config?.stripLinkSuffix) {
+		domHandlers.push(stripLinkSuffix)
+	}
+
 	if (config?.fixNumericIds) {
 		const prefix = typeof config.fixNumericIds === 'string' ? config.fixNumericIds : 'id'
 		domHandlers.push(createFixNumericIds(prefix))
 	}
 
-	if (config?.deduplicateIds) domHandlers.push(deduplicateIds)
+	if (config?.deduplicateIds) {
+		domHandlers.push(deduplicateIds)
+	}
 
 	if (config?.customDomHandler) {
 		if (Array.isArray(config.customDomHandler)) {
@@ -70,7 +81,9 @@ export function htmlKit(config?: HtmlKitMiddlewareConfig): MiddlewareHandler {
 		}
 	}
 
-	if (config?.trimTrailingWhitespace) stringHandlers.push(trimTrailingWhitespace)
+	if (config?.trimTrailingWhitespace) {
+		stringHandlers.push(trimTrailingWhitespace)
+	}
 
 	if (config?.customStringHandler) {
 		if (Array.isArray(config.customStringHandler)) {

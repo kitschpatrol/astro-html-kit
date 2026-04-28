@@ -197,13 +197,17 @@ This architecture means transforms apply to all Astro-rendered HTML regardless o
 
 ## Maintainers
 
-[@kitschpatrol](https://github.com/kitschpatrol)
+[kitschpatrol](https://github.com/kitschpatrol)
 
 <!-- contributing -->
 
 ## Contributing
 
-[Issues](https://github.com/kitschpatrol/astro-html-kit/issues) and pull requests are welcome.
+[Issues](https://github.com/kitschpatrol/astro-html-kit/issues) are welcome and appreciated.
+
+Please open an issue to discuss changes before submitting a pull request. Unsolicited PRs (especially AI-generated ones) are unlikely to be merged.
+
+This repository uses [@kitschpatrol/shared-config](https://github.com/kitschpatrol/shared-config) (via its `ksc` CLI) for linting and formatting, plus [MDAT](https://github.com/kitschpatrol/mdat) for readme placeholder expansion.
 
 <!-- /contributing -->
 
@@ -211,6 +215,6 @@ This architecture means transforms apply to all Astro-rendered HTML regardless o
 
 ## License
 
-[MIT](license.txt) © Eric Mika
+[MIT](license.txt) © [Eric Mika](https://ericmika.com)
 
 <!-- /license -->

@@ -5,6 +5,7 @@
 		// vs. the extended @kitschpatrol/typescript-config
 		"target": "ESNext",
 		"jsx": "preserve",
+		"jsxImportSource": "astro",
 		"allowUnusedLabels": false,
 		"exactOptionalPropertyTypes": true,
 		"noImplicitOverride": true,
@@ -22,7 +23,14 @@
 		"./playground-starlight/.astro/types.d.ts",
 		"./playground/.astro/types.d.ts"
 	],
-	"exclude": ["**/dist/", "**/bin/", "**/node_modules/"],
+	"exclude": [
+		"**/dist/",
+		"**/bin/",
+		"**/node_modules/",
+		"./.astro",
+		"./playground/.astro",
+		"./playground/astro.config.ts"
+	],
 	"mdx": {
 		"plugins": ["remark-directive", "remark-attribute-list"]
 	}
