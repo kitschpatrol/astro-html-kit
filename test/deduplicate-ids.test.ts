@@ -50,6 +50,19 @@ describe('deduplicateIds', () => {
 		expect(result.querySelector('div')!.getAttribute('id')).toBe('nav-2')
 	})
 
+	it('skips suffixed ids that already exist on the page', async () => {
+		const document = parseDocument(`<html><body>
+			<h2 id="concept">A</h2>
+			<h2 id="concept">B</h2>
+			<h2 id="concept-2">C</h2>
+		</body></html>`)
+		const result = await deduplicateIds(context, document)
+		const headings = result.querySelectorAll('h2')
+		expect(headings[0]!.getAttribute('id')).toBe('concept')
+		expect(headings[1]!.getAttribute('id')).toBe('concept-2')
+		expect(headings[2]!.getAttribute('id')).toBe('concept-2-2')
+	})
+
 	it('handles multiple groups of duplicates', async () => {
 		const document = parseDocument(`<html><body>
 			<h2 id="alpha">A1</h2>
