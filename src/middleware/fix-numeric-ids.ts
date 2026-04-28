@@ -1,12 +1,29 @@
 import { defineDomMiddleware } from './dom-middleware'
 
 const NUMERIC_ID_REGEX = /^\d/
-const NUMERIC_HREF_REGEX = /^#\d/
+
+// Attributes whose value is one or more whitespace-separated ID references.
+// `for` and `headers` accept multiple, the aria-* attributes vary, but
+// splitting on whitespace works uniformly for both single- and multi-value
+// forms.
+const ID_REFERENCE_ATTRIBUTES = [
+	'aria-activedescendant',
+	'aria-controls',
+	'aria-describedby',
+	'aria-details',
+	'aria-errormessage',
+	'aria-flowto',
+	'aria-labelledby',
+	'aria-owns',
+	'for',
+	'headers',
+] as const
 
 /**
  * Creates a DOM middleware handler that prefixes numeric IDs to ensure valid
- * HTML identifiers. Also updates anchor links and `[aria-*]` attributes
- * pointing to those IDs.
+ * HTML identifiers. Also updates anchor `<a href="#…">` links, `<label for>`,
+ * `<th/td headers>`, and the aria-* attributes that reference IDs so that
+ * existing references continue to resolve.
  *
  * Markdown headings like `## 2024 Updates` generate `id="2024-updates"`, which
  * starts with a digit. While valid in HTML5, this causes issues with CSS
@@ -15,6 +32,8 @@ const NUMERIC_HREF_REGEX = /^#\d/
  */
 export function createFixNumericIds(prefix: string) {
 	const fullPrefix = `${prefix}-`
+	const prefixIfNumeric = (id: string): string =>
+		NUMERIC_ID_REGEX.test(id) ? `${fullPrefix}${id}` : id
 
 	return defineDomMiddleware((_context, document) => {
 		for (const element of document.querySelectorAll('[id]')) {
@@ -26,8 +45,22 @@ export function createFixNumericIds(prefix: string) {
 
 		for (const anchor of document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')) {
 			const href = anchor.getAttribute('href')
-			if (href && NUMERIC_HREF_REGEX.test(href)) {
+			if (href && href.length > 1 && NUMERIC_ID_REGEX.test(href.slice(1))) {
 				anchor.setAttribute('href', `#${fullPrefix}${href.slice(1)}`)
+			}
+		}
+
+		for (const attribute of ID_REFERENCE_ATTRIBUTES) {
+			for (const element of document.querySelectorAll(`[${attribute}]`)) {
+				const value = element.getAttribute(attribute)
+				if (!value) {
+					continue
+				}
+
+				const updated = value.split(/\s+/).map(prefixIfNumeric).join(' ')
+				if (updated !== value) {
+					element.setAttribute(attribute, updated)
+				}
 			}
 		}
 

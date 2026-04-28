@@ -48,6 +48,42 @@ describe('fixNumericIds', () => {
 		expect(result.querySelector('a')!.getAttribute('href')).toBe('#id-3-things')
 	})
 
+	it('rewrites label[for] pointing at numeric ids', async () => {
+		const document = parseDocument(
+			'<html><body><label for="2024-field">Year</label><input id="2024-field"/></body></html>',
+		)
+		const result = await fixNumericIds(context, document)
+		expect(result.querySelector('label')!.getAttribute('for')).toBe('id-2024-field')
+		expect(result.querySelector('input')!.getAttribute('id')).toBe('id-2024-field')
+	})
+
+	it('rewrites aria-labelledby with a single id reference', async () => {
+		const document = parseDocument(
+			'<html><body><h2 id="2024-updates">2024</h2><div aria-labelledby="2024-updates">Body</div></body></html>',
+		)
+		const result = await fixNumericIds(context, document)
+		expect(result.querySelector('div')!.getAttribute('aria-labelledby')).toBe('id-2024-updates')
+	})
+
+	it('rewrites only the numeric ids inside whitespace-separated reference lists', async () => {
+		const document = parseDocument(
+			'<html><body><div aria-describedby="alpha 2024-updates beta"></div></body></html>',
+		)
+		const result = await fixNumericIds(context, document)
+		expect(result.querySelector('div')!.getAttribute('aria-describedby')).toBe(
+			'alpha id-2024-updates beta',
+		)
+	})
+
+	it('rewrites th[headers] lists', async () => {
+		const document = parseDocument(
+			'<html><body><table><tr><th id="3-col">3</th></tr><tr><td headers="3-col">cell</td></tr></table></body></html>',
+		)
+		const result = await fixNumericIds(context, document)
+		expect(result.querySelector('th')!.getAttribute('id')).toBe('id-3-col')
+		expect(result.querySelector('td')!.getAttribute('headers')).toBe('id-3-col')
+	})
+
 	it('uses a custom prefix', async () => {
 		const customFixIds = createFixNumericIds('heading')
 		const document = parseDocument(`<html><body>
