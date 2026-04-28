@@ -7,9 +7,9 @@ const mockContext = {
 	url: new URL('http://localhost:4321/'),
 }
 
-function htmlResponse(html: string) {
+function htmlResponse(html: string, contentType = 'text/html') {
 	return new Response(html, {
-		headers: { 'content-type': 'text/html' },
+		headers: { 'content-type': contentType },
 	})
 }
 
@@ -51,6 +51,21 @@ describe('htmlKit', () => {
 		const response = await callMiddleware(middleware, '<html><body><p>Hello</p></body></html>')
 		const result = await response.text()
 		expect(result).toContain('<p>Hello</p>')
+	})
+
+	it('processes HTML responses with a charset parameter', async () => {
+		const middleware = htmlKit({ annotateExternalLinks: true })
+		const response = (await middleware(context, () =>
+			Promise.resolve(
+				htmlResponse(
+					'<html><body><a href="https://example.com">Ext</a></body></html>',
+					'text/html; charset=utf-8',
+				),
+			),
+			// eslint-disable-next-line ts/no-unsafe-type-assertion
+		)) as Response
+		const result = await response.text()
+		expect(result).toContain('data-external-link')
 	})
 
 	it('skips non-HTML responses', async () => {

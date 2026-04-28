@@ -56,8 +56,9 @@ export function domSequence(options: DomSequenceOptions): MiddlewareHandler {
 
 	return async (context, next) => {
 		const response = await next()
-		// Only operate on HTML responses
-		if (response.headers.get('content-type') !== 'text/html') {
+		// Only operate on HTML responses. Astro typically emits
+		// `text/html; charset=utf-8`, so match by prefix.
+		if (!response.headers.get('content-type')?.startsWith('text/html')) {
 			return response
 		}
 
