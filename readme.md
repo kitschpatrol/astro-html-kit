@@ -37,6 +37,7 @@ Built-in transforms:
 - **`stripLinkSuffix`** — Remove `.html` from internal link hrefs (including before `?query` and `#hash`).
 - **`fixNumericIds`** — Prefix IDs that start with a digit (e.g. `id="2024-updates"` becomes `id="id-2024-updates"`) to avoid issues with CSS selectors and JavaScript APIs. Also rewrites `<a href="#…">` fragments along with `for`, `headers`, and the aria-\* attributes that reference IDs.
 - **`deduplicateIds`** — Append `-2`, `-3`, etc. to duplicate IDs on the page, matching `github-slugger` behavior but page-wide.
+- **`unwrapEmptyLinks`** — Replace `<a>` elements with empty, whitespace-only, or missing `href` with their children.
 - **`trimTrailingWhitespace`** — Trim trailing whitespace from each line of the HTML output.
 
 All transforms are disabled by default and must be explicitly enabled.
@@ -117,6 +118,7 @@ All options apply to both the integration and middleware configs, except `custom
 | `fixNumericIds`          | `boolean \| string`                                    | `false` | Prefix numeric IDs. `true` uses `id-`, a string sets a custom prefix (the trailing `-` is added automatically). |
 | `stripLinkSuffix`        | `boolean`                                              | `false` | Remove `.html` from internal link hrefs. Requires `site` in config.                                             |
 | `trimTrailingWhitespace` | `boolean`                                              | `false` | Trim trailing whitespace from each line of the HTML output.                                                     |
+| `unwrapEmptyLinks`       | `boolean`                                              | `false` | Replace `<a>` elements with empty, whitespace-only, or missing `href` with their children.                      |
 | `customDomHandler`       | `DomMiddlewareHandler \| DomMiddlewareHandler[]`       | none    | Custom DOM transform(s). Middleware only — function handlers can't be serialized through the integration.       |
 | `customStringHandler`    | `StringMiddlewareHandler \| StringMiddlewareHandler[]` | none    | Custom string transform(s). Middleware only — function handlers can't be serialized through the integration.    |
 
@@ -160,7 +162,7 @@ export const onRequest = htmlKit({
 
 ### Execution order
 
-1. Built-in DOM handlers, in this fixed order: `annotateExternalLinks`, `addLinkPrefix`, `stripLinkSuffix`, `fixNumericIds`, `deduplicateIds`
+1. Built-in DOM handlers, in this fixed order: `annotateExternalLinks`, `addLinkPrefix`, `stripLinkSuffix`, `fixNumericIds`, `deduplicateIds`, `unwrapEmptyLinks`
 2. Custom DOM handlers
 3. Serialization via linkedom `toString()`
 4. Built-in string handlers (`trimTrailingWhitespace`)

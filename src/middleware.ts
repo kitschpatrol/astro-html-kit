@@ -7,6 +7,14 @@ import { externalLinkAnnotator } from './middleware/external-link-annotator'
 import { createFixNumericIds } from './middleware/fix-numeric-ids'
 import { stripLinkSuffix } from './middleware/strip-link-suffix'
 import { trimTrailingWhitespace } from './middleware/trim-trailing-whitespace'
+import { unwrapEmptyLinks } from './middleware/unwrap-empty-links'
+
+/**
+ * Coerce a value or array of values into an array.
+ */
+function toArray<T>(value: T | T[]): T[] {
+	return Array.isArray(value) ? value : [value]
+}
 
 /**
  * Configuration for the astro-html-kit middleware.
@@ -20,6 +28,7 @@ export type HtmlKitMiddlewareConfig = {
 	fixNumericIds?: boolean | string
 	stripLinkSuffix?: boolean
 	trimTrailingWhitespace?: boolean
+	unwrapEmptyLinks?: boolean
 }
 
 /**
@@ -73,12 +82,12 @@ export function htmlKit(config?: HtmlKitMiddlewareConfig): MiddlewareHandler {
 		domHandlers.push(deduplicateIds)
 	}
 
+	if (config?.unwrapEmptyLinks) {
+		domHandlers.push(unwrapEmptyLinks)
+	}
+
 	if (config?.customDomHandler) {
-		if (Array.isArray(config.customDomHandler)) {
-			domHandlers.push(...config.customDomHandler)
-		} else {
-			domHandlers.push(config.customDomHandler)
-		}
+		domHandlers.push(...toArray(config.customDomHandler))
 	}
 
 	if (config?.trimTrailingWhitespace) {
@@ -86,11 +95,7 @@ export function htmlKit(config?: HtmlKitMiddlewareConfig): MiddlewareHandler {
 	}
 
 	if (config?.customStringHandler) {
-		if (Array.isArray(config.customStringHandler)) {
-			stringHandlers.push(...config.customStringHandler)
-		} else {
-			stringHandlers.push(config.customStringHandler)
-		}
+		stringHandlers.push(...toArray(config.customStringHandler))
 	}
 
 	return domSequence({ domHandlers, stringHandlers })
