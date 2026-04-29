@@ -20,14 +20,77 @@ function toArray<T>(value: T | T[]): T[] {
  * Configuration for the astro-html-kit middleware.
  */
 export type HtmlKitMiddlewareConfig = {
+	/**
+	 * Prefix `/_astro/` asset paths in `href`, `src`, and `srcset` attributes
+	 * with `BASE_URL` (read from `import.meta.env`).
+	 *
+	 * @default false
+	 */
 	addLinkPrefix?: boolean
+	/**
+	 * Add `data-external-link` and `rel="noopener noreferrer"` to links pointing
+	 * outside your site.
+	 *
+	 * @default false
+	 */
 	annotateExternalLinks?: boolean
+	/**
+	 * One or more custom DOM transforms run after all built-in DOM handlers. Each
+	 * handler receives the shared `Document` and may mutate it in place.
+	 *
+	 * Middleware-only — function handlers can't be serialized through the
+	 * integration's virtual module.
+	 */
 	customDomHandler?: DomMiddlewareHandler | DomMiddlewareHandler[]
+	/**
+	 * One or more custom string transforms run on the serialized HTML, after
+	 * built-in string handlers.
+	 *
+	 * Middleware-only — function handlers can't be serialized through the
+	 * integration's virtual module.
+	 */
 	customStringHandler?: StringMiddlewareHandler | StringMiddlewareHandler[]
+	/**
+	 * Append `-2`, `-3`, etc. to duplicate IDs page-wide. Mirrors
+	 * `github-slugger` behavior, but runs across all rendered content rather than
+	 * per Markdown document.
+	 *
+	 * @default false
+	 */
 	deduplicateIds?: boolean
+	/**
+	 * Prefix IDs that begin with a digit so they're valid CSS/JS identifiers
+	 * (e.g. `id="2024-updates"` becomes `id="id-2024-updates"`).
+	 *
+	 * - `true` uses the prefix `id-`.
+	 * - A string sets a custom prefix; the trailing `-` is added automatically.
+	 *
+	 * Also rewrites `<a href="#…">` fragments and `for`, `headers`, and `aria-*`
+	 * attributes that reference fixed IDs.
+	 *
+	 * @default false
+	 */
 	fixNumericIds?: boolean | string
+	/**
+	 * Remove `.html` from internal link `href`s, including before `?query` and
+	 * `#hash`. Requires `site` to be set in your Astro config so internal vs.
+	 * external links can be distinguished.
+	 *
+	 * @default false
+	 */
 	stripLinkSuffix?: boolean
+	/**
+	 * Trim trailing whitespace from each line of the serialized HTML output.
+	 *
+	 * @default false
+	 */
 	trimTrailingWhitespace?: boolean
+	/**
+	 * Replace `<a>` elements with an empty, whitespace-only, or missing `href`
+	 * attribute with their children.
+	 *
+	 * @default false
+	 */
 	unwrapEmptyLinks?: boolean
 }
 
