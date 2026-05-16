@@ -1,6 +1,6 @@
 {
 	"name": "astro-html-kit",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "Astro integration and middleware to clean up your HTML.",
 	"keywords": [
 		"astro",
