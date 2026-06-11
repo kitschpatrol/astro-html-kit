@@ -48,20 +48,20 @@
 	},
 	"devDependencies": {
 		"@astrojs/check": "^0.9.9",
-		"@kitschpatrol/shared-config": "^7.6.0",
+		"@kitschpatrol/shared-config": "^7.6.3",
 		"@types/node": "~24.12.4",
-		"astro": "^6.3.3",
+		"astro": "^6.4.4",
 		"bumpp": "^11.1.0",
-		"node-addon-api": "^8.7.0",
+		"node-addon-api": "^8.8.0",
 		"node-gyp": "^12.3.0",
 		"shx": "^0.4.0",
 		"typescript": "~5.9.3",
-		"vitest": "^4.1.6"
+		"vitest": "^4.1.8"
 	},
 	"peerDependencies": {
-		"astro": "^6.0.0"
+		"astro": "^6.4.0"
 	},
-	"packageManager": "pnpm@11.1.2",
+	"packageManager": "pnpm@11.5.1",
 	"engines": {
 		"node": ">=22.12.0"
 	},
