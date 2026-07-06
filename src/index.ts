@@ -1,10 +1,10 @@
-/* eslint-disable unicorn/no-useless-undefined */
-
 import type { AstroIntegration } from 'astro'
 import type { HtmlKitMiddlewareConfig } from './middleware'
 
 const virtualModuleId = 'virtual:astro-html-kit/middleware'
 const resolvedVirtualModuleId = `\0${virtualModuleId}`
+const virtualModuleIdFilter = /^virtual:astro-html-kit\/middleware$/
+const resolvedVirtualModuleIdFilter = /^\0virtual:astro-html-kit\/middleware$/
 
 /**
  * Integration configuration for astro-html-kit.
@@ -41,20 +41,18 @@ export type HtmlKitConfig = Omit<
  */
 export default function htmlKit(config?: HtmlKitConfig): AstroIntegration {
 	const virtualModulePlugin = {
-		load(id: string) {
-			if (id === resolvedVirtualModuleId) {
+		load: {
+			filter: { id: resolvedVirtualModuleIdFilter },
+			handler() {
 				return `import { htmlKit } from 'astro-html-kit/middleware';\nexport const onRequest = htmlKit(${JSON.stringify(config ?? {})});`
-			}
-
-			return undefined
+			},
 		},
 		name: 'astro-html-kit:virtual',
-		resolveId(id: string) {
-			if (id === virtualModuleId) {
+		resolveId: {
+			filter: { id: virtualModuleIdFilter },
+			handler() {
 				return resolvedVirtualModuleId
-			}
-
-			return undefined
+			},
 		},
 	}
 

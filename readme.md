@@ -28,7 +28,7 @@ Astro renders clean HTML, but the final output often needs small fixes that are 
 
 `astro-html-kit` runs these transforms as Astro middleware. The point of collecting them in one place is efficiency: every HTML response is parsed into a DOM once, all handlers operate on that single parsed document, and it's serialized back to HTML once. No matter how many transforms you enable, the cost is one parse/serialize round-trip — not one per transform. String-level handlers then run on the serialized output. Even with no transforms enabled, the [linkedom](https://github.com/nicolo-ribaudo/linkedom) round-trip normalizes the HTML.
 
-Some of these transforms (like fixing numeric IDs or deduplicating headings) could be implemented as rehype plugins, which would be more efficient since they'd run during Markdown/MDX compilation rather than on the final HTML. The trade-off is that rehype only covers the Markdown pipeline. Running as middleware means every Astro-rendered page is covered — `.astro` templates, framework components, and Markdown/MDX alike.
+Some of these transforms (like fixing numeric IDs or deduplicating headings) could be implemented as rehype plugins, which would be more efficient since they'd run during Markdown/MDX compilation rather than on the final HTML. The trade-off is that rehype only covers the Markdown pipeline — and as of Astro 7, using rehype plugins means installing `@astrojs/markdown-remark` and opting out of the default Sätteri processor. Running as middleware means every Astro-rendered page is covered — `.astro` templates, framework components, and Markdown/MDX alike.
 
 Built-in transforms:
 
@@ -51,7 +51,7 @@ Two ways to use `astro-html-kit`:
 
 ### Prerequisites
 
-An [Astro](https://astro.build/) 6+ project.
+An [Astro](https://astro.build/) 7+ project.
 
 ### Installation
 

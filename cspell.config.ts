@@ -1,5 +1,5 @@
 import { cspellConfig } from '@kitschpatrol/cspell-config'
 
 export default cspellConfig({
-	words: ['describedby', 'flowto', 'labelledby'],
+	words: ['describedby', 'flowto', 'labelledby', 'Sätteri'],
 })

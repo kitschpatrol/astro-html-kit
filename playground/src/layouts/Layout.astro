@@ -1,9 +1,10 @@
 ---
 type Props = {
-	title: string
+	frontmatter?: { title?: string }
+	title?: string
 }
 
-const { title } = Astro.props
+const { frontmatter, title = frontmatter?.title } = Astro.props
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/'
 ---
 
