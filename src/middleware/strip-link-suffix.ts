@@ -5,21 +5,21 @@ const { BASE_URL: baseUrl } = import.meta.env
 // Match `.html` at the end of the path, or immediately before a query
 // (`?`) or fragment (`#`), so that `/about.html?x=1` and `/about.html#top`
 // are also stripped to `/about?x=1` and `/about#top`.
-const HTML_SUFFIX_REGEX = /\.html(?=$|[?#])/
+const HTML_SUFFIX_REGEX = /\.html(?=$|[?#])/v
 
 export const stripLinkSuffix = defineDomMiddleware((context, document) => {
-	if (!context.site || !baseUrl) {
+	if (!context.site || baseUrl === '') {
 		return document
 	}
 
 	const baseValues = [
-		`${stripTrailingSlash(context.site.toString())}${stripTrailingSlash(baseUrl)}`,
+		`${stripTrailingSlash(context.site.href)}${stripTrailingSlash(baseUrl)}`,
 		baseUrl,
 	]
 
 	for (const anchor of document.querySelectorAll('a')) {
-		const href = anchor.getAttribute('href')
-		if (!href) {
+		const href = anchor.getAttribute('href') ?? ''
+		if (href === '') {
 			continue
 		}
 

@@ -3,8 +3,8 @@ import type { HtmlKitMiddlewareConfig } from './middleware'
 
 const virtualModuleId = 'virtual:astro-html-kit/middleware'
 const resolvedVirtualModuleId = `\0${virtualModuleId}`
-const virtualModuleIdFilter = /^virtual:astro-html-kit\/middleware$/
-const resolvedVirtualModuleIdFilter = /^\0virtual:astro-html-kit\/middleware$/
+const virtualModuleIdFilter = /^virtual:astro-html-kit\/middleware$/v
+const resolvedVirtualModuleIdFilter = /^\0virtual:astro-html-kit\/middleware$/v
 
 /**
  * Integration configuration for astro-html-kit.

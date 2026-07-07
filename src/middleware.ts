@@ -17,6 +17,22 @@ function toArray<T>(value: T | T[]): T[] {
 }
 
 /**
+ * Resolve the `fixNumericIds` config value into a prefix string, or `undefined`
+ * when the transform is disabled.
+ */
+function resolveNumericIdPrefix(value: boolean | string | undefined): string | undefined {
+	if (value === true) {
+		return 'id'
+	}
+
+	if (typeof value === 'string' && value !== '') {
+		return value
+	}
+
+	return undefined
+}
+
+/**
  * Configuration for the astro-html-kit middleware.
  */
 export type HtmlKitMiddlewareConfig = {
@@ -136,9 +152,9 @@ export function htmlKit(config?: HtmlKitMiddlewareConfig): MiddlewareHandler {
 		domHandlers.push(stripLinkSuffix)
 	}
 
-	if (config?.fixNumericIds) {
-		const prefix = typeof config.fixNumericIds === 'string' ? config.fixNumericIds : 'id'
-		domHandlers.push(createFixNumericIds(prefix))
+	const numericIdPrefix = resolveNumericIdPrefix(config?.fixNumericIds)
+	if (numericIdPrefix !== undefined) {
+		domHandlers.push(createFixNumericIds(numericIdPrefix))
 	}
 
 	if (config?.deduplicateIds) {

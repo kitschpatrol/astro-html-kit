@@ -13,8 +13,8 @@ export const deduplicateIds = defineDomMiddleware((_context, document) => {
 	const counts = new Map<string, number>()
 
 	for (const element of document.querySelectorAll('[id]')) {
-		const id = element.getAttribute('id')
-		if (!id) {
+		const id = element.getAttribute('id') ?? ''
+		if (id === '') {
 			continue
 		}
 

@@ -7,7 +7,7 @@ const ASTRO_PATH_PREFIX = '/_astro/'
 
 const URL_ATTRIBUTES = ['href', 'src'] as const
 
-const LEADING_WHITESPACE_REGEX = /^\s*/
+const LEADING_WHITESPACE_REGEX = /^\s*/v
 
 function rewriteSrcset(value: string, prefix: string): string {
 	return value
@@ -26,7 +26,7 @@ function rewriteSrcset(value: string, prefix: string): string {
 
 export const addLinkPrefix = defineDomMiddleware((_context, document) => {
 	const prefix = stripTrailingSlash(baseUrl)
-	if (!prefix) {
+	if (prefix === '') {
 		return document
 	}
 
@@ -38,8 +38,8 @@ export const addLinkPrefix = defineDomMiddleware((_context, document) => {
 			}
 		}
 
-		const srcset = element.getAttribute('srcset')
-		if (srcset) {
+		const srcset = element.getAttribute('srcset') ?? ''
+		if (srcset !== '') {
 			const updated = rewriteSrcset(srcset, prefix)
 			if (updated !== srcset) {
 				element.setAttribute('srcset', updated)

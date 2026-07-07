@@ -1,6 +1,6 @@
 import { defineDomMiddleware } from './dom-middleware'
 
-const NUMERIC_ID_REGEX = /^\d/
+const NUMERIC_ID_REGEX = /^\d/v
 
 // Attributes whose value is one or more whitespace-separated ID references.
 // `for` and `headers` accept multiple, the aria-* attributes vary, but
@@ -19,7 +19,11 @@ const ID_REFERENCE_ATTRIBUTES = [
 	'headers',
 ] as const
 
-const WHITESPACE_SPLIT_REGEX = /\s+/
+const ID_REFERENCE_SELECTOR = ID_REFERENCE_ATTRIBUTES.map((attribute) => `[${attribute}]`).join(
+	', ',
+)
+
+const WHITESPACE_SPLIT_REGEX = /\s+/v
 
 /**
  * Creates a DOM middleware handler that prefixes numeric IDs to ensure valid
@@ -39,32 +43,30 @@ export function createFixNumericIds(prefix: string) {
 
 	return defineDomMiddleware((_context, document) => {
 		for (const element of document.querySelectorAll('[id]')) {
-			const id = element.getAttribute('id')
-			if (id && NUMERIC_ID_REGEX.test(id)) {
+			const id = element.getAttribute('id') ?? ''
+			if (NUMERIC_ID_REGEX.test(id)) {
 				element.setAttribute('id', `${fullPrefix}${id}`)
 			}
 		}
 
 		for (const anchor of document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')) {
-			const href = anchor.getAttribute('href')
-			if (href && href.length > 1 && NUMERIC_ID_REGEX.test(href.slice(1))) {
+			const href = anchor.getAttribute('href') ?? ''
+			if (href.length > 1 && NUMERIC_ID_REGEX.test(href.slice(1))) {
 				anchor.setAttribute('href', `#${fullPrefix}${href.slice(1)}`)
 			}
 		}
 
-		for (const attribute of ID_REFERENCE_ATTRIBUTES) {
-			for (const element of document.querySelectorAll(`[${attribute}]`)) {
-				const value = element.getAttribute(attribute)
-				if (!value) {
-					continue
-				}
-
-				const updated = value
-					.split(WHITESPACE_SPLIT_REGEX)
-					.map((id) => prefixIfNumeric(id))
-					.join(' ')
-				if (updated !== value) {
-					element.setAttribute(attribute, updated)
+		for (const element of document.querySelectorAll(ID_REFERENCE_SELECTOR)) {
+			for (const attribute of ID_REFERENCE_ATTRIBUTES) {
+				const value = element.getAttribute(attribute) ?? ''
+				if (value !== '') {
+					const updated = value
+						.split(WHITESPACE_SPLIT_REGEX)
+						.map((id) => prefixIfNumeric(id))
+						.join(' ')
+					if (updated !== value) {
+						element.setAttribute(attribute, updated)
+					}
 				}
 			}
 		}
