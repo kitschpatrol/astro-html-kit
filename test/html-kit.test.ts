@@ -94,6 +94,17 @@ describe('htmlKit', () => {
 		expect(result).not.toContain('data-external-link')
 	})
 
+	it('runs string handlers on the serialized output', async () => {
+		const middleware = htmlKit({ trimTrailingWhitespace: true })
+		const response = await callMiddleware(
+			middleware,
+			'<html><body><p>Line one   \nLine two</p></body></html>',
+		)
+		const result = await response.text()
+		expect(result).toContain('Line one\nLine two')
+		expect(result).not.toContain('Line one   ')
+	})
+
 	it('runs a single custom handler', async () => {
 		const middleware = htmlKit({ customDomHandler: addCustomAttribute })
 		const response = await callMiddleware(middleware, '<html><body><p>Test</p></body></html>')

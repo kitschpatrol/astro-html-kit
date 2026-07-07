@@ -45,7 +45,9 @@ export type HtmlKitMiddlewareConfig = {
 	addLinkPrefix?: boolean
 	/**
 	 * Add `data-external-link` and `rel="noopener noreferrer"` to links pointing
-	 * outside your site.
+	 * outside your site. Existing `rel` tokens are preserved. Requires `site` to
+	 * be set in your Astro config so internal vs. external links can be
+	 * distinguished.
 	 *
 	 * @default false
 	 */

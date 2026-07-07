@@ -26,13 +26,13 @@
 
 Astro renders clean HTML, but the final output often needs small fixes that are tedious to handle per-page: stripping `.html` suffixes from links, annotating external URLs, deduplicating IDs across repeated content, or trimming trailing whitespace.
 
-`astro-html-kit` runs these transforms as Astro middleware. The point of collecting them in one place is efficiency: every HTML response is parsed into a DOM once, all handlers operate on that single parsed document, and it's serialized back to HTML once. No matter how many transforms you enable, the cost is one parse/serialize round-trip — not one per transform. String-level handlers then run on the serialized output. Even with no transforms enabled, the [linkedom](https://github.com/nicolo-ribaudo/linkedom) round-trip normalizes the HTML.
+`astro-html-kit` runs these transforms as Astro middleware. The point of collecting them in one place is efficiency: every HTML response is parsed into a DOM once, all handlers operate on that single parsed document, and it's serialized back to HTML once. No matter how many transforms you enable, the cost is one parse/serialize round-trip — not one per transform. String-level handlers then run on the serialized output. Even with no transforms enabled, the [linkedom](https://github.com/WebReflection/linkedom) round-trip normalizes the HTML.
 
 Some of these transforms (like fixing numeric IDs or deduplicating headings) could be implemented as rehype plugins, which would be more efficient since they'd run during Markdown/MDX compilation rather than on the final HTML. The trade-off is that rehype only covers the Markdown pipeline — and as of Astro 7, using rehype plugins means installing `@astrojs/markdown-remark` and opting out of the default Sätteri processor. Running as middleware means every Astro-rendered page is covered — `.astro` templates, framework components, and Markdown/MDX alike.
 
 Built-in transforms:
 
-- **`annotateExternalLinks`** — Add `data-external-link` and `rel="noopener noreferrer"` to links pointing outside your site.
+- **`annotateExternalLinks`** — Add `data-external-link` and `rel="noopener noreferrer"` to links pointing outside your site. Existing `rel` tokens are preserved.
 - **`addLinkPrefix`** — Prefix `/_astro/` asset paths in `href`, `src`, and `srcset` attributes with `BASE_URL`.
 - **`stripLinkSuffix`** — Remove `.html` from internal link hrefs (including before `?query` and `#hash`).
 - **`fixNumericIds`** — Prefix IDs that start with a digit (e.g. `id="2024-updates"` becomes `id="id-2024-updates"`) to avoid issues with CSS selectors and JavaScript APIs. Also rewrites `<a href="#…">` fragments along with `for`, `headers`, and the aria-\* attributes that reference IDs.
@@ -113,7 +113,7 @@ All options apply to both the integration and middleware configs, except `custom
 | Option                   | Type                                                   | Default | Description                                                                                                     |
 | ------------------------ | ------------------------------------------------------ | ------- | --------------------------------------------------------------------------------------------------------------- |
 | `addLinkPrefix`          | `boolean`                                              | `false` | Prefix `/_astro/` asset paths in `href`, `src`, and `srcset` with `BASE_URL` (read from `import.meta.env`).     |
-| `annotateExternalLinks`  | `boolean`                                              | `false` | Add `data-external-link` and `rel` to external links.                                                           |
+| `annotateExternalLinks`  | `boolean`                                              | `false` | Add `data-external-link` and `rel` to external links. Requires `site` in config.                                |
 | `deduplicateIds`         | `boolean`                                              | `false` | Append `-2`, `-3`, etc. to duplicate IDs.                                                                       |
 | `fixNumericIds`          | `boolean \| string`                                    | `false` | Prefix numeric IDs. `true` uses `id-`, a string sets a custom prefix (the trailing `-` is added automatically). |
 | `stripLinkSuffix`        | `boolean`                                              | `false` | Remove `.html` from internal link hrefs. Requires `site` in config.                                             |
@@ -172,7 +172,7 @@ export const onRequest = htmlKit({
 
 `astro-html-kit` middleware intercepts Astro's HTML responses after rendering. Only responses with `content-type: text/html` are processed — JSON, CSS, and other content types pass through untouched.
 
-The HTML is parsed into a DOM via [linkedom](https://github.com/nicolo-ribaudo/linkedom), a lightweight server-side DOM implementation. All DOM handlers share the same parsed document (one parse/serialize cycle, regardless of how many handlers run). After DOM transforms complete, the document is serialized back to HTML and passed through any string handlers.
+The HTML is parsed into a DOM via [linkedom](https://github.com/WebReflection/linkedom), a lightweight server-side DOM implementation. All DOM handlers share the same parsed document (one parse/serialize cycle, regardless of how many handlers run). After DOM transforms complete, the document is serialized back to HTML and passed through any string handlers.
 
 This architecture means transforms apply to all Astro-rendered HTML regardless of source: `.astro` pages, Markdown, MDX, and framework components.
 

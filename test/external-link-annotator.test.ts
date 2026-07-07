@@ -53,4 +53,32 @@ describe('externalLinkAnnotator', () => {
 		const link = result.querySelector('a')!
 		expect(Object.hasOwn(link.dataset, 'externalLink')).toBe(false)
 	})
+
+	it('preserves existing rel tokens', async () => {
+		const document = parseDocument(
+			'<html><body><a href="https://example.com" rel="me nofollow">External</a></body></html>',
+		)
+		const result = await externalLinkAnnotator(context, document)
+		const link = result.querySelector('a')!
+		expect(link.getAttribute('rel')).toBe('me nofollow noopener noreferrer')
+	})
+
+	it('does not duplicate rel tokens already present', async () => {
+		const document = parseDocument(
+			'<html><body><a href="https://example.com" rel="noopener">External</a></body></html>',
+		)
+		const result = await externalLinkAnnotator(context, document)
+		expect(result.querySelector('a')!.getAttribute('rel')).toBe('noopener noreferrer')
+	})
+
+	it('does nothing without a site configured', async () => {
+		const noSiteContext = createMockContext()
+		const document = parseDocument(
+			'<html><body><a href="https://example.com">External</a></body></html>',
+		)
+		const result = await externalLinkAnnotator(noSiteContext, document)
+		const link = result.querySelector('a')!
+		expect(Object.hasOwn(link.dataset, 'externalLink')).toBe(false)
+		expect(link.hasAttribute('rel')).toBe(false)
+	})
 })
