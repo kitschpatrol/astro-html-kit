@@ -16,10 +16,9 @@ publicHoistPattern:
   - '*stylelint*'
 allowBuilds:
   esbuild: true
-  puppeteer: true
+  oxc-resolver: true
   sharp: true
   unrs-resolver: true
-  ws: true
 minimumReleaseAgeExclude:
   - '@astrojs/*'
   - '@kitschpatrol/*'

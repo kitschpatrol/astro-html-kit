@@ -8,7 +8,7 @@ const { BASE_URL: baseUrl } = import.meta.env
 const HTML_SUFFIX_REGEX = /\.html(?=$|[?#])/v
 
 export const stripLinkSuffix = defineDomMiddleware((context, document) => {
-	if (!context.site || baseUrl === '') {
+	if (baseUrl === '' || !context.site) {
 		return document
 	}
 
