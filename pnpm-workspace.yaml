@@ -2,7 +2,22 @@ packages:
   - .
   - playground
   - playground-starlight
+allowBuilds:
+  esbuild: true
+  unrs-resolver: true
 ignoreWorkspaceRootCheck: true
+minimumReleaseAgeExclude:
+  - '@kitschpatrol/cspell-config@8.12.1'
+  - '@kitschpatrol/eslint-config@8.12.1'
+  - '@kitschpatrol/knip-config@8.12.1'
+  - '@kitschpatrol/mdat-config@8.12.1'
+  - '@kitschpatrol/prettier-config@8.12.1'
+  - '@kitschpatrol/remark-config@8.12.1'
+  - '@kitschpatrol/repo-config@8.12.1'
+  - '@kitschpatrol/shared-config@8.12.1'
+  - '@kitschpatrol/stylelint-config@8.12.1'
+  - '@kitschpatrol/typescript-config@8.12.1'
+  - poptab@1.2.2
 publicHoistPattern:
   - '@kitschpatrol/repo-config'
   - '@kitschpatrol/typescript-config'
@@ -14,22 +29,7 @@ publicHoistPattern:
   - '*prettier*'
   - '*remark*'
   - '*stylelint*'
-allowBuilds:
-  esbuild: true
-  oxc-resolver: true
-  sharp: true
-  unrs-resolver: true
-minimumReleaseAgeExclude:
-  - '@astrojs/*'
-  - '@cspell/*'
-  - '@kitschpatrol/*'
-  - astro
-  - cspell
-  - cspell-config-lib
-  - cspell-dictionary
-  - cspell-gitignore
-  - cspell-glob
-  - cspell-grammar
-  - cspell-io
-  - cspell-lib
-  - cspell-trie-lib
+peerDependencyRules:
+  allowedVersions:
+    # No eslint 10 release yet, but runtime-compatible (used via eslint-plugin-astro)
+    'eslint-plugin-jsx-a11y>eslint': '10'

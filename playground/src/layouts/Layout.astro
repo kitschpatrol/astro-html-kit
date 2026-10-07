@@ -81,11 +81,15 @@ const currentPath = trimmedPath === '' ? '/' : trimmedPath
 	</head>
 	<body>
 		<nav>
-			<a aria-current={currentPath === '/' ? 'page' : undefined} href="/">Astro</a>
-			<a aria-current={currentPath === '/mdx' ? 'page' : undefined} href="/mdx">MDX</a>
-			<a aria-current={currentPath === '/markdown' ? 'page' : undefined} href="/markdown"
-				>Markdown</a
-			>
+			<a aria-current={currentPath === '/' ? 'page' : undefined} href="/">
+				Astro
+			</a>
+			<a aria-current={currentPath === '/mdx' ? 'page' : undefined} href="/mdx">
+				MDX
+			</a>
+			<a aria-current={currentPath === '/markdown' ? 'page' : undefined} href="/markdown">
+				Markdown
+			</a>
 		</nav>
 		<main>
 			<slot />

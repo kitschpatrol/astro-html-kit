@@ -15,11 +15,7 @@ function rewriteSrcset(value: string, prefix: string): string {
 		.map((candidate) => {
 			const leading = LEADING_WHITESPACE_REGEX.exec(candidate)?.[0] ?? ''
 			const rest = candidate.slice(leading.length)
-			if (rest.startsWith(ASTRO_PATH_PREFIX)) {
-				return `${leading}${prefix}${rest}`
-			}
-
-			return candidate
+			return rest.startsWith(ASTRO_PATH_PREFIX) ? `${leading}${prefix}${rest}` : candidate
 		})
 		.join(',')
 }
@@ -39,11 +35,13 @@ export const addLinkPrefix = defineDomMiddleware((_context, document) => {
 		}
 
 		const srcset = element.getAttribute('srcset') ?? ''
-		if (srcset !== '') {
-			const updated = rewriteSrcset(srcset, prefix)
-			if (updated !== srcset) {
-				element.setAttribute('srcset', updated)
-			}
+		if (srcset === '') {
+			continue
+		}
+
+		const updated = rewriteSrcset(srcset, prefix)
+		if (updated !== srcset) {
+			element.setAttribute('srcset', updated)
 		}
 	}
 

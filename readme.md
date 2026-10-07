@@ -49,9 +49,14 @@ Two ways to use `astro-html-kit`:
 
 ## Getting started
 
+<!-- dependencies({ heading: "Prerequisites" }) -->
+
 ### Prerequisites
 
-An [Astro](https://astro.build/) 7+ project.
+- [Node.js](https://nodejs.org/) 24.16.0 or newer (specifically `^24.16.0 || >=26.3.0`)
+- [astro](https://www.npmjs.com/package/astro) `^7.0.0` _(peer dependency)_
+
+<!-- /dependencies -->
 
 ### Installation
 

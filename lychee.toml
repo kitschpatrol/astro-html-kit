@@ -1,1 +1,1 @@
-exclude_path = ["playground/src/pages/markdown.md"]
+exclude_path = ['playground/src/pages/markdown.md']

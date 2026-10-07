@@ -25,11 +25,7 @@ function resolveNumericIdPrefix(value: boolean | string | undefined): string | u
 		return 'id'
 	}
 
-	if (typeof value === 'string' && value !== '') {
-		return value
-	}
-
-	return undefined
+	return typeof value === 'string' && value !== '' ? value : undefined
 }
 
 /**

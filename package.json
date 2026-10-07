@@ -23,7 +23,7 @@
 		"email": "eric@ericmika.com",
 		"url": "https://ericmika.com"
 	},
-	"sideEffects": true,
+	"sideEffects": false,
 	"type": "module",
 	"exports": {
 		".": "./src/index.ts",
@@ -35,11 +35,12 @@
 	],
 	"scripts": {
 		"build": "pnpm astro sync && pnpm run -r astro sync",
-		"clean": "shx rm -f pnpm-lock.yaml && git clean -fdX -e !.claude/",
+		"clean-deep": "shx rm -f pnpm-lock.yaml && git clean -fdX -e !.claude/",
 		"dev": "pnpm -C playground run dev",
 		"dev-starlight": "pnpm -C playground-starlight run dev",
 		"fix": "ksc fix",
 		"lint": "ksc lint && pnpm run -r --include-workspace-root astro check",
+		"prepare": "skills experimental_sync -y -f",
 		"release": "bumpp --commit 'Release: %s' && pnpm build && pnpm publish --otp $(op item get npm --otp)",
 		"test": "vitest run"
 	},
@@ -48,21 +49,22 @@
 	},
 	"devDependencies": {
 		"@astrojs/check": "^0.9.10",
-		"@kitschpatrol/shared-config": "^8.7.0",
+		"@kitschpatrol/shared-config": "^8.12.1",
 		"@types/node": "~24.13.3",
-		"astro": "^7.2.7",
-		"bumpp": "^12.2.1",
+		"astro": "^7.3.6",
+		"bumpp": "^12.3.0",
 		"node-addon-api": "^8.9.2",
-		"node-gyp": "^13.0.1",
+		"node-gyp": "^13.1.0",
 		"shx": "^0.4.0",
+		"skills": "^1.7.0",
 		"typescript": "~6.0.3",
-		"vitest": "^4.1.11"
+		"vitest": "^5.0.3"
 	},
 	"peerDependencies": {
 		"astro": "^7.0.0"
 	},
-	"packageManager": "pnpm@11.22.0",
+	"packageManager": "pnpm@12.9.1",
 	"engines": {
-		"node": ">=24.16.0"
+		"node": "^24.16.0 || >=26.3.0"
 	}
 }

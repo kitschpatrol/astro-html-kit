@@ -59,14 +59,16 @@ export function createFixNumericIds(prefix: string) {
 		for (const element of document.querySelectorAll(ID_REFERENCE_SELECTOR)) {
 			for (const attribute of ID_REFERENCE_ATTRIBUTES) {
 				const value = element.getAttribute(attribute) ?? ''
-				if (value !== '') {
-					const updated = value
-						.split(WHITESPACE_SPLIT_REGEX)
-						.map((id) => prefixIfNumeric(id))
-						.join(' ')
-					if (updated !== value) {
-						element.setAttribute(attribute, updated)
-					}
+				if (value === '') {
+					continue
+				}
+
+				const updated = value
+					.split(WHITESPACE_SPLIT_REGEX)
+					.map((id) => prefixIfNumeric(id))
+					.join(' ')
+				if (updated !== value) {
+					element.setAttribute(attribute, updated)
 				}
 			}
 		}

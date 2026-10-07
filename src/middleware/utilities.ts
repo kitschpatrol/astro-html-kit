@@ -2,9 +2,5 @@
  * Strips trailing slash
  */
 export function stripTrailingSlash(string: string): string {
-	if (string.endsWith('/')) {
-		return string.slice(0, -1)
-	}
-
-	return string
+	return string.endsWith('/') ? string.slice(0, -1) : string
 }
