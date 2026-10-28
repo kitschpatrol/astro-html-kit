@@ -13,15 +13,14 @@ export const externalLinkAnnotator = defineDomMiddleware((context, document) => 
 		return document
 	}
 
-	const localHostname = 'localhost'
-	const { hostname: ourHostname } = context.site
+	const internalHostnames = new Set(['', context.site.hostname, 'localhost'])
 	// TODO Not on hero pages for starlight?
 	for (const element of document.querySelectorAll<HTMLAnchorElement>(
 		'a[href]:not([href^="#"]):not([href^="/"])',
 	)) {
 		try {
 			const { hostname } = new URL(element.href)
-			if (hostname !== ourHostname && hostname !== localHostname && hostname !== '') {
+			if (!internalHostnames.has(hostname)) {
 				element.dataset.externalLink = ''
 				const tokens = new Set(
 					(element.getAttribute('rel') ?? '')
