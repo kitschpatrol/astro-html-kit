@@ -41,7 +41,7 @@
 		"fix": "ksc fix",
 		"lint": "ksc lint && pnpm run -r --include-workspace-root astro check",
 		"prepare": "pnpm build",
-		"release": "bumpp --commit 'Release: %s' && pnpm build && pnpm publish --otp $(op item get npm --otp)",
+		"release": "bumpp --commit 'Release: %s' --all --execute 'chagent --root-changelog package --skip-package playground*' && pnpm build && pnpm publish --otp $(op item get npm --otp)",
 		"test": "vitest run"
 	},
 	"dependencies": {
@@ -49,6 +49,7 @@
 	},
 	"devDependencies": {
 		"@astrojs/check": "^0.9.12",
+		"@kitschpatrol/chagent": "0.4.0",
 		"@kitschpatrol/shared-config": "^8.14.0",
 		"@types/node": "~24.13.6",
 		"astro": "^7.4.4",
