@@ -29,7 +29,7 @@ function isWithinPrefix(href: string, prefix: string): boolean {
  * config.
  *
  * @param baseUrl The configured base path, normally `import.meta.env.BASE_URL`.
- * A trailing slash is ignored, so `/docs` and `/docs/` behave the same.
+ *   A trailing slash is ignored, so `/docs` and `/docs/` behave the same.
  */
 export function createStripLinkSuffix(baseUrl: string): DomMiddlewareHandler {
 	const basePath = stripTrailingSlash(baseUrl)
@@ -43,7 +43,7 @@ export function createStripLinkSuffix(baseUrl: string): DomMiddlewareHandler {
 
 		for (const anchor of document.querySelectorAll('a[href]')) {
 			const href = anchor.getAttribute('href') ?? ''
-			if (!prefixes.some((prefix) => isWithinPrefix(href, prefix))) {
+			if (prefixes.every((prefix) => !isWithinPrefix(href, prefix))) {
 				continue
 			}
 

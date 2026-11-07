@@ -24,8 +24,8 @@ function rewriteSrcset(value: string, prefix: string): string {
  * `href`, `src`, and `srcset` attributes with the site's base path.
  *
  * @param baseUrl The configured base path, normally `import.meta.env.BASE_URL`.
- * A trailing slash is ignored, so `/docs` and `/docs/` behave the same, and
- * the root base `/` is a no-op.
+ *   A trailing slash is ignored, so `/docs` and `/docs/` behave the same, and
+ *   the root base `/` is a no-op.
  */
 export function createAddLinkPrefix(baseUrl: string): DomMiddlewareHandler {
 	const prefix = stripTrailingSlash(baseUrl)

@@ -92,7 +92,9 @@ describe('stripLinkSuffix', () => {
 			'<html><body><a href="http://localhost:43210/about.html">Other port</a></body></html>',
 		)
 		const result = await stripLinkSuffix(context, document)
-		expect(result.querySelector('a')!.getAttribute('href')).toBe('http://localhost:43210/about.html')
+		expect(result.querySelector('a')!.getAttribute('href')).toBe(
+			'http://localhost:43210/about.html',
+		)
 	})
 
 	it('leaves document-relative links alone', async () => {
