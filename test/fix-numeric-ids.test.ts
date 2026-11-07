@@ -112,7 +112,7 @@ describe('fixNumericIds', () => {
 		expect(button.getAttribute('popovertarget')).toBe('id-2024-popover')
 		expect(button.getAttribute('commandfor')).toBe('id-2024-dialog')
 		for (const id of ['id-2024-form', 'id-2024-options', 'id-2024-popover', 'id-2024-dialog']) {
-			expect(result.getElementById(id)).not.toBeNull()
+			expect(result.querySelector(`#${id}`)).not.toBeNull()
 		}
 	})
 })

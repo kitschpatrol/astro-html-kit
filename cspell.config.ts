@@ -2,5 +2,5 @@ import { cspellConfig } from '@kitschpatrol/cspell-config'
 
 export default cspellConfig({
 	ignorePaths: ['**/changelog.md'],
-	words: ['chagent', 'flowto', 'labelledby'],
+	words: ['chagent', 'commandfor', 'flowto', 'labelledby', 'popovertarget'],
 })
