@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.1] - 2026-11-07
+
+### Maintenance
+
+- Refresh development and release tooling, including `@kitschpatrol/chagent`, `@kitschpatrol/shared-config`, Vitest, and pnpm.
+- Add a pnpm package extension declaring `@emnapi/runtime@1.11.3` for `@astrojs/astro2tsx@0.1.3` to match its pinned `@emnapi/core` dependency.
+- Update GitHub Actions for pnpm installation, repository metadata synchronization, and dependency-update automation.
+
 ## [0.6.0] - 2026-11-06
 
 ### Changed
@@ -186,3 +194,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.5.3]: https://github.com/kitschpatrol/astro-html-kit/compare/v0.5.2...v0.5.3
 [0.5.4]: https://github.com/kitschpatrol/astro-html-kit/compare/v0.5.3...v0.5.4
 [0.6.0]: https://github.com/kitschpatrol/astro-html-kit/compare/v0.5.4...v0.6.0
+[0.6.1]: https://github.com/kitschpatrol/astro-html-kit/compare/v0.6.0...v0.6.1
