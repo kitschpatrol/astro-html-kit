@@ -41,9 +41,10 @@ export type HtmlKitMiddlewareConfig = {
 	addLinkPrefix?: boolean
 	/**
 	 * Add `data-external-link` and `rel="noopener noreferrer"` to links pointing
-	 * outside your site. Existing `rel` tokens are preserved. Requires `site` to
-	 * be set in your Astro config so internal vs. external links can be
-	 * distinguished.
+	 * outside your site. Existing `rel` tokens are preserved. Each `href` is
+	 * resolved against `site`, so relative paths count as internal and
+	 * protocol-relative URLs count as external; `localhost` is treated as
+	 * internal. Requires `site` to be set in your Astro config.
 	 *
 	 * @default false
 	 */
@@ -67,7 +68,8 @@ export type HtmlKitMiddlewareConfig = {
 	/**
 	 * Append `-2`, `-3`, etc. to duplicate IDs page-wide. Mirrors
 	 * `github-slugger` behavior, but runs across all rendered content rather than
-	 * per Markdown document.
+	 * per Markdown document. Only `id` attributes change; references to a renamed
+	 * ID are left as-is.
 	 *
 	 * @default false
 	 */
@@ -79,29 +81,33 @@ export type HtmlKitMiddlewareConfig = {
 	 * - `true` uses the prefix `id-`.
 	 * - A string sets a custom prefix; the trailing `-` is added automatically.
 	 *
-	 * Also rewrites `<a href="#…">` fragments and `for`, `headers`, and `aria-*`
-	 * attributes that reference fixed IDs.
+	 * Also rewrites `<a href="#…">` fragments and the `for`, `form`, `headers`,
+	 * `list`, `popovertarget`, `commandfor`, and `aria-*` attributes that
+	 * reference fixed IDs.
 	 *
 	 * @default false
 	 */
 	fixNumericIds?: boolean | string
 	/**
 	 * Remove `.html` from internal link `href`s, including before `?query` and
-	 * `#hash`. Requires `site` to be set in your Astro config so internal vs.
-	 * external links can be distinguished.
+	 * `#hash`. A link is internal when it's a root-relative path under `BASE_URL`
+	 * or an absolute URL on `site` under `BASE_URL`; document-relative links are
+	 * left alone. Requires `site` to be set in your Astro config.
 	 *
 	 * @default false
 	 */
 	stripLinkSuffix?: boolean
 	/**
-	 * Trim trailing whitespace from each line of the serialized HTML output.
+	 * Trim trailing whitespace from each line of the serialized HTML output. Line
+	 * endings are preserved.
 	 *
 	 * @default false
 	 */
 	trimTrailingWhitespace?: boolean
 	/**
 	 * Replace `<a>` elements with an empty, whitespace-only, or missing `href`
-	 * attribute with their children.
+	 * attribute with their children. Anchors with an `id` or `name` attribute are
+	 * kept, since they serve as fragment targets.
 	 *
 	 * @default false
 	 */

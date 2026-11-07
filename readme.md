@@ -32,13 +32,13 @@ Some of these transforms (like fixing numeric IDs or deduplicating headings) cou
 
 Built-in transforms:
 
-- **`annotateExternalLinks`** — Add `data-external-link` and `rel="noopener noreferrer"` to links pointing outside your site. Existing `rel` tokens are preserved.
+- **`annotateExternalLinks`** — Add `data-external-link` and `rel="noopener noreferrer"` to links pointing outside your site. Existing `rel` tokens are preserved. Each `href` is resolved against `site`, so relative paths and fragments count as internal, while protocol-relative URLs (`//cdn.example.com/…`) and other hosts count as external. Links to `localhost` are treated as internal.
 - **`addLinkPrefix`** — Prefix `/_astro/` asset paths in `href`, `src`, and `srcset` attributes with `BASE_URL`.
-- **`stripLinkSuffix`** — Remove `.html` from internal link hrefs (including before `?query` and `#hash`).
-- **`fixNumericIds`** — Prefix IDs that start with a digit (e.g. `id="2024-updates"` becomes `id="id-2024-updates"`) to avoid issues with CSS selectors and JavaScript APIs. Also rewrites `<a href="#…">` fragments along with `for`, `headers`, and the aria-\* attributes that reference IDs.
-- **`deduplicateIds`** — Append `-2`, `-3`, etc. to duplicate IDs on the page, matching `github-slugger` behavior but page-wide.
-- **`unwrapEmptyLinks`** — Replace `<a>` elements with empty, whitespace-only, or missing `href` with their children.
-- **`trimTrailingWhitespace`** — Trim trailing whitespace from each line of the HTML output.
+- **`stripLinkSuffix`** — Remove `.html` from internal link hrefs (including before `?query` and `#hash`). A link is internal when it's a root-relative path under `base`, or an absolute URL on your `site` under `base`. Document-relative links like `page.html` are left alone.
+- **`fixNumericIds`** — Prefix IDs that start with a digit (e.g. `id="2024-updates"` becomes `id="id-2024-updates"`) to avoid issues with CSS selectors and JavaScript APIs. Also rewrites `<a href="#…">` fragments along with the `for`, `form`, `headers`, `list`, `popovertarget`, `commandfor`, and aria-\* attributes that reference IDs.
+- **`deduplicateIds`** — Append `-2`, `-3`, etc. to duplicate IDs on the page, matching `github-slugger` behavior but page-wide. Only the `id` attributes change; links and other references to a renamed ID are left as-is and keep resolving to its first occurrence.
+- **`unwrapEmptyLinks`** — Replace `<a>` elements with empty, whitespace-only, or missing `href` with their children. Anchors with an `id` or `name` attribute are kept, since they serve as fragment targets.
+- **`trimTrailingWhitespace`** — Trim trailing whitespace from each line of the HTML output. Line endings are preserved.
 
 All transforms are disabled by default and must be explicitly enabled.
 
@@ -101,7 +101,7 @@ export const onRequest = htmlKit({
 })
 ```
 
-Compose with other middleware using Astro's `sequence`:
+Compose with other middleware using Astro's `sequence`. Put `htmlKit()` first so it wraps the others and transforms their final output. (The integration registers itself with `order: 'pre'` for the same reason.)
 
 ```ts
 // In src/middleware.ts
@@ -115,17 +115,17 @@ export const onRequest = sequence(htmlKit({ annotateExternalLinks: true }), myOt
 
 All options apply to both the integration and middleware configs, except `customDomHandler` and `customStringHandler` which are middleware-only (functions can't be serialized through the integration's virtual module).
 
-| Option                   | Type                                                   | Default | Description                                                                                                     |
-| ------------------------ | ------------------------------------------------------ | ------- | --------------------------------------------------------------------------------------------------------------- |
-| `addLinkPrefix`          | `boolean`                                              | `false` | Prefix `/_astro/` asset paths in `href`, `src`, and `srcset` with `BASE_URL` (read from `import.meta.env`).     |
-| `annotateExternalLinks`  | `boolean`                                              | `false` | Add `data-external-link` and `rel` to external links. Requires `site` in config.                                |
-| `deduplicateIds`         | `boolean`                                              | `false` | Append `-2`, `-3`, etc. to duplicate IDs.                                                                       |
-| `fixNumericIds`          | `boolean \| string`                                    | `false` | Prefix numeric IDs. `true` uses `id-`, a string sets a custom prefix (the trailing `-` is added automatically). |
-| `stripLinkSuffix`        | `boolean`                                              | `false` | Remove `.html` from internal link hrefs. Requires `site` in config.                                             |
-| `trimTrailingWhitespace` | `boolean`                                              | `false` | Trim trailing whitespace from each line of the HTML output.                                                     |
-| `unwrapEmptyLinks`       | `boolean`                                              | `false` | Replace `<a>` elements with empty, whitespace-only, or missing `href` with their children.                      |
-| `customDomHandler`       | `DomMiddlewareHandler \| DomMiddlewareHandler[]`       | none    | Custom DOM transform(s). Middleware only — function handlers can't be serialized through the integration.       |
-| `customStringHandler`    | `StringMiddlewareHandler \| StringMiddlewareHandler[]` | none    | Custom string transform(s). Middleware only — function handlers can't be serialized through the integration.    |
+| Option                   | Type                                                   | Default | Description                                                                                                                         |
+| ------------------------ | ------------------------------------------------------ | ------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `addLinkPrefix`          | `boolean`                                              | `false` | Prefix `/_astro/` asset paths in `href`, `src`, and `srcset` with `BASE_URL` (read from `import.meta.env`).                         |
+| `annotateExternalLinks`  | `boolean`                                              | `false` | Add `data-external-link` and `rel` to external links. Requires `site` in config.                                                    |
+| `deduplicateIds`         | `boolean`                                              | `false` | Append `-2`, `-3`, etc. to duplicate IDs.                                                                                           |
+| `fixNumericIds`          | `boolean \| string`                                    | `false` | Prefix numeric IDs. `true` uses `id-`, a string sets a custom prefix (the trailing `-` is added automatically).                     |
+| `stripLinkSuffix`        | `boolean`                                              | `false` | Remove `.html` from internal link hrefs. Requires `site` in config.                                                                 |
+| `trimTrailingWhitespace` | `boolean`                                              | `false` | Trim trailing whitespace from each line of the HTML output.                                                                         |
+| `unwrapEmptyLinks`       | `boolean`                                              | `false` | Replace `<a>` elements with empty, whitespace-only, or missing `href` with their children. Anchors with an `id` or `name` are kept. |
+| `customDomHandler`       | `DomMiddlewareHandler \| DomMiddlewareHandler[]`       | none    | Custom DOM transform(s). Middleware only — function handlers can't be serialized through the integration.                           |
+| `customStringHandler`    | `StringMiddlewareHandler \| StringMiddlewareHandler[]` | none    | Custom string transform(s). Middleware only — function handlers can't be serialized through the integration.                        |
 
 ## Custom handlers
 
@@ -175,9 +175,11 @@ export const onRequest = htmlKit({
 
 ## How it works
 
-`astro-html-kit` middleware intercepts Astro's HTML responses after rendering. Only responses with `content-type: text/html` are processed — JSON, CSS, and other content types pass through untouched.
+`astro-html-kit` middleware intercepts Astro's HTML responses after rendering. Only responses with `content-type: text/html` are processed — JSON, CSS, and other content types pass through untouched. The response body is read in full before parsing, so HTML responses are buffered rather than streamed. HTML fragments, such as partial pages, are serialized as fragments and not wrapped in `<html>`.
 
 The HTML is parsed into a DOM via [linkedom](https://github.com/WebReflection/linkedom), a lightweight server-side DOM implementation. All DOM handlers share the same parsed document (one parse/serialize cycle, regardless of how many handlers run). After DOM transforms complete, the document is serialized back to HTML and passed through any string handlers.
+
+Serialization normalizes the markup even when no transforms are enabled: named character references are decoded (`&copy;` becomes `©`, `&nbsp;` becomes `&#160;`), `&amp;` in attribute values becomes a bare `&`, and camel-cased SVG element names like `linearGradient` are lowercased. Browsers parse all of this correctly in HTML documents.
 
 This architecture means transforms apply to all Astro-rendered HTML regardless of source: `.astro` pages, Markdown, MDX, and framework components.
 
