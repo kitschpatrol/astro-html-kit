@@ -45,23 +45,21 @@
 		"test": "vitest run"
 	},
 	"dependencies": {
-		"linkedom": "^0.18.14"
+		"linkedom": "^0.18.15"
 	},
 	"devDependencies": {
 		"@astrojs/check": "^0.9.12",
 		"@kitschpatrol/chagent": "0.4.0",
 		"@kitschpatrol/shared-config": "^8.14.0",
 		"@types/node": "~24.13.6",
-		"astro": "^7.4.4",
+		"astro": "^7.4.7",
 		"bumpp": "^12.3.0",
-		"node-addon-api": "^8.9.2",
-		"node-gyp": "^13.1.0",
 		"shx": "^0.4.0",
 		"typescript": "~6.0.3",
 		"vitest": "^5.0.5"
 	},
 	"peerDependencies": {
-		"astro": "^7.0.0"
+		"astro": "^7.4.7"
 	},
 	"packageManager": "pnpm@12.16.1",
 	"engines": {
