@@ -40,6 +40,12 @@ export type HtmlKitConfig = Omit<
  * 	})
  */
 export default function htmlKit(config?: HtmlKitConfig): AstroIntegration {
+	if (config !== undefined && ('customDomHandler' in config || 'customStringHandler' in config)) {
+		throw new Error(
+			'astro-html-kit: `customDomHandler` and `customStringHandler` are not supported by the integration because functions cannot be serialized. Call `htmlKit()` from `astro-html-kit/middleware` in `src/middleware.ts` instead.',
+		)
+	}
+
 	const virtualModulePlugin = {
 		load: {
 			filter: { id: resolvedVirtualModuleIdFilter },
