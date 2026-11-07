@@ -77,4 +77,26 @@ describe('unwrapEmptyLinks', () => {
 		expect(result.querySelector('a')).toBeNull()
 		expect(result.querySelector('p')!.textContent).toBe('start  end')
 	})
+
+	it('keeps anchors with an id attribute as fragment targets', async () => {
+		const document = parseDocument(`<html><body>
+			<a id="section-top"></a>
+			<p>content</p>
+		</body></html>`)
+		const result = await unwrapEmptyLinks(context, document)
+		const anchor = result.querySelector('a')
+		expect(anchor).not.toBeNull()
+		expect(anchor!.getAttribute('id')).toBe('section-top')
+	})
+
+	it('keeps anchors with a name attribute as fragment targets', async () => {
+		const document = parseDocument(`<html><body>
+			<a name="legacy-anchor">label</a>
+		</body></html>`)
+		const result = await unwrapEmptyLinks(context, document)
+		const anchor = result.querySelector('a')
+		expect(anchor).not.toBeNull()
+		expect(anchor!.getAttribute('name')).toBe('legacy-anchor')
+		expect(anchor!.textContent).toBe('label')
+	})
 })
