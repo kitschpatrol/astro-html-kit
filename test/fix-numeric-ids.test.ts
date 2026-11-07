@@ -94,4 +94,25 @@ describe('fixNumericIds', () => {
 		expect(result.querySelector('h2')!.getAttribute('id')).toBe('heading-99-problems')
 		expect(result.querySelector('a')!.getAttribute('href')).toBe('#heading-99-problems')
 	})
+
+	it('rewrites input[list], [form], [popovertarget], and [commandfor] references', async () => {
+		const document = parseDocument(`<html><body>
+			<form id="2024-form"></form>
+			<input list="2024-options" form="2024-form" />
+			<datalist id="2024-options"></datalist>
+			<button popovertarget="2024-popover" commandfor="2024-dialog">Open</button>
+			<div id="2024-popover" popover></div>
+			<dialog id="2024-dialog"></dialog>
+		</body></html>`)
+		const result = await fixNumericIds(context, document)
+		const input = result.querySelector('input')!
+		expect(input.getAttribute('list')).toBe('id-2024-options')
+		expect(input.getAttribute('form')).toBe('id-2024-form')
+		const button = result.querySelector('button')!
+		expect(button.getAttribute('popovertarget')).toBe('id-2024-popover')
+		expect(button.getAttribute('commandfor')).toBe('id-2024-dialog')
+		for (const id of ['id-2024-form', 'id-2024-options', 'id-2024-popover', 'id-2024-dialog']) {
+			expect(result.getElementById(id)).not.toBeNull()
+		}
+	})
 })

@@ -3,9 +3,8 @@ import { defineDomMiddleware } from './dom-middleware'
 const NUMERIC_ID_REGEX = /^\d/v
 
 // Attributes whose value is one or more whitespace-separated ID references.
-// `for` and `headers` accept multiple, the aria-* attributes vary, but
-// splitting on whitespace works uniformly for both single- and multi-value
-// forms.
+// Some accept a single ID and others a list, but splitting on whitespace
+// handles both forms uniformly.
 const ID_REFERENCE_ATTRIBUTES = [
 	'aria-activedescendant',
 	'aria-controls',
@@ -15,8 +14,12 @@ const ID_REFERENCE_ATTRIBUTES = [
 	'aria-flowto',
 	'aria-labelledby',
 	'aria-owns',
+	'commandfor',
 	'for',
+	'form',
 	'headers',
+	'list',
+	'popovertarget',
 ] as const
 
 const ID_REFERENCE_SELECTOR = ID_REFERENCE_ATTRIBUTES.map((attribute) => `[${attribute}]`).join(
@@ -27,9 +30,10 @@ const WHITESPACE_SPLIT_REGEX = /\s+/v
 
 /**
  * Creates a DOM middleware handler that prefixes numeric IDs to ensure valid
- * HTML identifiers. Also updates anchor `<a href="#…">` links, `<label for>`,
- * `<th/td headers>`, and the aria-* attributes that reference IDs so that
- * existing references continue to resolve.
+ * HTML identifiers. Also updates anchor `<a href="#…">` links and the `for`,
+ * `form`, `headers`, `list`, `popovertarget`, `commandfor`, and aria-*
+ * attributes that reference IDs so that existing references continue to
+ * resolve.
  *
  * Markdown headings like `## 2024 Updates` generate `id="2024-updates"`, which
  * starts with a digit. While valid in HTML5, this causes issues with CSS

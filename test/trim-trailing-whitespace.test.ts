@@ -29,4 +29,9 @@ describe('trimTrailingWhitespace', () => {
 		const html = '<html><body><p>Hello</p></body></html>'
 		expect(await trimTrailingWhitespace(context, html)).toBe(html)
 	})
+
+	it('preserves CRLF line endings', async () => {
+		const result = await trimTrailingWhitespace(context, 'one  \r\ntwo\t\r\nthree  ')
+		expect(result).toBe('one\r\ntwo\r\nthree')
+	})
 })
