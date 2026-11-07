@@ -1,11 +1,11 @@
 import type { MiddlewareHandler } from 'astro'
 import type { DomMiddlewareHandler, StringMiddlewareHandler } from './middleware/dom-middleware'
-import { addLinkPrefix } from './middleware/add-link-prefix'
+import { createAddLinkPrefix } from './middleware/add-link-prefix'
 import { deduplicateIds } from './middleware/deduplicate-ids'
 import { domSequence } from './middleware/dom-middleware'
 import { externalLinkAnnotator } from './middleware/external-link-annotator'
 import { createFixNumericIds } from './middleware/fix-numeric-ids'
-import { stripLinkSuffix } from './middleware/strip-link-suffix'
+import { createStripLinkSuffix } from './middleware/strip-link-suffix'
 import { trimTrailingWhitespace } from './middleware/trim-trailing-whitespace'
 import { unwrapEmptyLinks } from './middleware/unwrap-empty-links'
 
@@ -135,6 +135,9 @@ export type HtmlKitMiddlewareConfig = {
  * 	})
  */
 export function htmlKit(config?: HtmlKitMiddlewareConfig): MiddlewareHandler {
+	// Property access (not destructuring) so Astro can statically replace the
+	// value at build time.
+	const baseUrl = import.meta.env.BASE_URL
 	const domHandlers: DomMiddlewareHandler[] = []
 	const stringHandlers: StringMiddlewareHandler[] = []
 
@@ -143,11 +146,11 @@ export function htmlKit(config?: HtmlKitMiddlewareConfig): MiddlewareHandler {
 	}
 
 	if (config?.addLinkPrefix) {
-		domHandlers.push(addLinkPrefix)
+		domHandlers.push(createAddLinkPrefix(baseUrl))
 	}
 
 	if (config?.stripLinkSuffix) {
-		domHandlers.push(stripLinkSuffix)
+		domHandlers.push(createStripLinkSuffix(baseUrl))
 	}
 
 	const numericIdPrefix = resolveNumericIdPrefix(config?.fixNumericIds)

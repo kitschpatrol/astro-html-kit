@@ -1,7 +1,6 @@
+import type { DomMiddlewareHandler } from './dom-middleware'
 import { defineDomMiddleware } from './dom-middleware'
 import { stripTrailingSlash } from './utilities'
-
-const { BASE_URL: baseUrl } = import.meta.env
 
 const ASTRO_PATH_PREFIX = '/_astro/'
 
@@ -20,30 +19,41 @@ function rewriteSrcset(value: string, prefix: string): string {
 		.join(',')
 }
 
-export const addLinkPrefix = defineDomMiddleware((_context, document) => {
+/**
+ * Creates a DOM middleware handler that prefixes `/_astro/` asset paths in
+ * `href`, `src`, and `srcset` attributes with the site's base path.
+ *
+ * @param baseUrl The configured base path, normally `import.meta.env.BASE_URL`.
+ * A trailing slash is ignored, so `/docs` and `/docs/` behave the same, and
+ * the root base `/` is a no-op.
+ */
+export function createAddLinkPrefix(baseUrl: string): DomMiddlewareHandler {
 	const prefix = stripTrailingSlash(baseUrl)
-	if (prefix === '') {
-		return document
-	}
 
-	for (const element of document.querySelectorAll('[href], [src], [srcset]')) {
-		for (const attribute of URL_ATTRIBUTES) {
-			const value = element.getAttribute(attribute)
-			if (value?.startsWith(ASTRO_PATH_PREFIX)) {
-				element.setAttribute(attribute, `${prefix}${value}`)
+	return defineDomMiddleware((_context, document) => {
+		if (prefix === '') {
+			return document
+		}
+
+		for (const element of document.querySelectorAll('[href], [src], [srcset]')) {
+			for (const attribute of URL_ATTRIBUTES) {
+				const value = element.getAttribute(attribute)
+				if (value?.startsWith(ASTRO_PATH_PREFIX)) {
+					element.setAttribute(attribute, `${prefix}${value}`)
+				}
+			}
+
+			const srcset = element.getAttribute('srcset') ?? ''
+			if (srcset === '') {
+				continue
+			}
+
+			const updated = rewriteSrcset(srcset, prefix)
+			if (updated !== srcset) {
+				element.setAttribute('srcset', updated)
 			}
 		}
 
-		const srcset = element.getAttribute('srcset') ?? ''
-		if (srcset === '') {
-			continue
-		}
-
-		const updated = rewriteSrcset(srcset, prefix)
-		if (updated !== srcset) {
-			element.setAttribute('srcset', updated)
-		}
-	}
-
-	return document
-})
+		return document
+	})
+}
