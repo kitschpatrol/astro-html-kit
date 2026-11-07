@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-11-06
+
+### Changed
+
+- **Breaking:** Raise the Astro peer dependency requirement from `^7.0.0` to `^7.4.7`.
+
+### Fixed
+
+- Preserve anchors with an `id` or `name` when `unwrapEmptyLinks` runs, keeping fragment navigation intact.
+- Annotate protocol-relative links to external hosts with `data-external-link` and `rel="noopener noreferrer"`.
+- Read `BASE_URL` through Astro's statically replaceable property access so asset prefixing and link suffix removal use the configured base in builds.
+- Make `stripLinkSuffix` respect base-path boundaries and the site's exact origin, preventing rewrites of similarly prefixed paths, hosts, and ports.
+- Preserve CRLF line endings when `trimTrailingWhitespace` removes trailing spaces and tabs.
+- Rewrite `form`, `list`, `popovertarget`, and `commandfor` references when `fixNumericIds` prefixes their target IDs.
+- Reject unsupported custom-handler options in integration configuration with an error directing callers to `astro-html-kit/middleware`, instead of silently dropping handlers.
+
+### Documentation
+
+- Expand README and configuration-type documentation for link classification, ID-reference rewriting, duplicate-ID references, fragment targets, and preserved line endings.
+- Document middleware ordering with `sequence()`, response buffering, fragment serialization, and linkedom's markup normalization even when transforms are disabled.
+
+### Maintenance
+
+- Integrate `@kitschpatrol/chagent` into changelog generation during releases and upgrade the GitHub release-changelog action to v3.
+- Update the `linkedom` dependency requirement from `^0.18.14` to `^0.18.15`.
+- Remove unused `node-gyp` and `node-addon-api` development dependencies.
+- Add integration tests for virtual-module resolution, configuration serialization, middleware registration, and invalid handlers; expand link-transform coverage for non-root bases and `srcset`.
+
 ## [0.5.4] - 2026-11-02
 
 ### Maintenance
@@ -157,3 +185,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.5.2]: https://github.com/kitschpatrol/astro-html-kit/compare/v0.5.1...v0.5.2
 [0.5.3]: https://github.com/kitschpatrol/astro-html-kit/compare/v0.5.2...v0.5.3
 [0.5.4]: https://github.com/kitschpatrol/astro-html-kit/compare/v0.5.3...v0.5.4
+[0.6.0]: https://github.com/kitschpatrol/astro-html-kit/compare/v0.5.4...v0.6.0
