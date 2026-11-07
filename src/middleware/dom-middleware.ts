@@ -70,8 +70,8 @@ export function domSequence(options: DomSequenceOptions): MiddlewareHandler {
 		const html = await response.text()
 		let { document } = parseHTML(html)
 
-		// Not actually copying the document, leaving that to the handlers,
-		//  so mutation is possible... gross but hypothetically for efficiency...
+		// Handlers share one document and mutate it in place, so the whole
+		// sequence costs a single parse and serialize.
 		for (const domHandler of domHandlers) {
 			document = await domHandler(context, document)
 		}
