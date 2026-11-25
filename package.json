@@ -54,6 +54,7 @@
 		"@types/node": "~24.13.6",
 		"astro": "^7.4.7",
 		"bumpp": "^12.3.0",
+		"modern-web-guidance": "^1.0.1",
 		"shx": "^0.4.0",
 		"typescript": "~6.0.3",
 		"vitest": "^5.1.0"
@@ -61,7 +62,7 @@
 	"peerDependencies": {
 		"astro": "^7.4.7"
 	},
-	"packageManager": "pnpm@12.18.0",
+	"packageManager": "pnpm@12.23.0",
 	"engines": {
 		"node": "^24.16.0 || >=26.3.0"
 	}
